@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程详情 - 课程知识图谱社区</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #fafcfd;
+            --card: #ffffff;
+            --text: #1e293b;--stripe-bg:#f8fafc;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --blue: #3b82f6;
+            --blue-light: #60a5fa;
+            --blue-soft: #eff6ff;
+            --violet: #8b5cf6;
+            --violet-soft: #f5f3ff;
+            --amber: #f59e0b;
+            --amber-soft: #fffbeb;
+            --green: #10b981;
+            --green-soft: #ecfdf5;
+            --pink: #ec4899;
+            --pink-soft: #fdf2f8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.03);
+            --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.05);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.1);
+            --radius: 18px;
+            --radius-sm: 10px;
+            --radius-pill: 9999px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-sans: 'Noto Sans SC', sans-serif;
+            --font-display: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+        }
+
+        body.dark {--bg:#0f1116;--card:#1a1d26;--stripe-bg:#1e2030;--text:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;--border:#2d3340;--border-light:#222836;--blue-soft:#1a2740;--violet-soft:#221f3a;--amber-soft:#2a2418;--green-soft:#162a22;--pink-soft:#2a1a26;--shadow-sm:0 1px 2px rgba(0,0,0,0.3);--shadow:0 1px 3px rgba(0,0,0,0.4);--shadow-md:0 4px 12px rgba(0,0,0,0.45);--shadow-lg:0 12px 40px rgba(0,0,0,0.5);--shadow-xl:0 20px 60px rgba(0,0,0,0.55)}
+        body.dark .navbar{background:rgba(15,17,22,.9);border-color:rgba(255,255,255,.06)}
+        body.dark .nav-links a:hover{color:var(--blue);background:rgba(59,130,246,.1)}
+        body.dark .nav-links a.active{color:var(--blue);background:rgba(59,130,246,.12)}
+        body.dark .nav-search input{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);color:var(--text)}
+        body.dark .theme-btn{border-color:rgba(255,255,255,.1)}
+        body.dark .theme-btn:hover{border-color:var(--blue);background:rgba(59,130,246,.1)}
+        body.dark .user-dropdown{background:var(--card);border-color:rgba(255,255,255,.08)}
+        body.dark .user-dropdown a:hover{background:rgba(255,255,255,.03)}
+        body.dark input,body.dark textarea,body.dark select{background:#1a1d26;border-color:var(--border);color:var(--text)}
+        body.dark .hero-banner{background:linear-gradient(135deg,#111827 0%,#15162a 50%,#0f1116 100%);border-color:var(--border)}
+        body.dark table tr:hover td{background:rgba(255,255,255,.02)}
+        body.dark .rate-area{background:#151821}
+        body.dark .btn-cancel{background:#1a1d26}
+        body.dark .btn-ghost{border-color:var(--border)}
+        body.dark .btn-ghost:hover{border-color:var(--blue)}
+        body.dark .filter-btn{color:var(--text-secondary);border-color:var(--border)}
+        body.dark .filter-btn.active{background:var(--blue);color:#fff}
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.5s ease-out both; }
+
+        /* Navbar - white glassmorphism */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 64px;
+            padding: 0 40px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .navbar .logo a {
+            font-family: var(--font-display); font-size: 18px; font-weight: 600;
+            text-decoration: none; color: var(--text);
+            display: flex; align-items: center; gap: 8px; letter-spacing: -0.3px;
+        }
+        .navbar .logo a .logo-dot {
+            width: 28px; height: 28px;
+            background: linear-gradient(135deg, var(--blue), var(--violet));
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 14px;
+        }
+        .nav-links { display: flex; align-items: center; gap: 2px; }
+        .nav-links a {
+            font-family: var(--font-sans);
+            color: var(--text-secondary); text-decoration: none; font-size: 14px;
+            font-weight: 500; padding: 6px 16px; border-radius: var(--radius-pill);
+            transition: all var(--transition);
+        }
+        .nav-links a:hover { color: var(--text); background: rgba(59, 130, 246, 0.05); }
+        .nav-links a.active { color: var(--blue); background: rgba(59, 130, 246, 0.06); }
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        .nav-search { position: relative; width: 200px; }
+        .nav-search input { width: 100%; padding: 8px 14px 8px 36px; background: rgba(0,0,0,.03); border: 1px solid rgba(0,0,0,.06); border-radius: 100px; color: var(--text); font-size: 13px; outline: none; font-family: inherit; }
+        .nav-search input:focus { border-color: var(--blue); background: var(--blue-soft, #eff6ff); }
+        .nav-search .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+        .theme-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(0,0,0,.08); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--text-secondary); }
+        .theme-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-soft, #eff6ff); }
+        .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,var(--blue),var(--violet)); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .user-dropdown { display: none; position: absolute; top: 48px; right: 0; width: 180px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-lg); padding: 6px; z-index: 200; }
+        .user-dropdown.show { display: block; }
+        .user-dropdown a { display: block; padding: 10px 14px; color: var(--text); text-decoration: none; font-size: 13px; border-radius: 10px; }
+        .user-dropdown a:hover { background: rgba(0,0,0,.03); }
+        .logo { font-size: 18px; font-weight: 600; text-decoration: none; color: var(--text); display: flex; align-items: center; gap: 8px; font-family: var(--font-display); }
+        .logo .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--blue); display: inline-block; }
+        .user-area { display: flex; align-items: center; gap: 10px; }
+        .btn-ghost {
+            background: transparent; border: 1px solid var(--border);
+            color: var(--text-secondary); padding: 7px 20px; cursor: pointer;
+            font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+            border-radius: var(--radius-pill);
+            transition: all var(--transition); text-decoration: none;
+        }
+        .btn-ghost:hover {
+            border-color: var(--blue); color: var(--blue);
+            background: rgba(59, 130, 246, 0.03);
+        }
+        .btn-primary-nav {
+            background: linear-gradient(135deg, var(--blue), #2563eb);
+            color: #fff; border: none; padding: 7px 20px; cursor: pointer;
+            font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+            border-radius: var(--radius-pill);
+            transition: all var(--transition); text-decoration: none;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+        }
+        .btn-primary-nav:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
+        }
+        .user-area .username {
+            font-family: var(--font-sans); font-size: 14px; color: var(--text-secondary);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-logout {
+            background: transparent; border: 1px solid var(--border);
+            color: var(--text-secondary); padding: 6px 16px; cursor: pointer;
+            font-family: var(--font-sans); font-size: 12px;
+            border-radius: var(--radius-pill);
+            transition: all var(--transition);
+        }
+        .btn-logout:hover {
+            border-color: #ef4444; color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* Container */
+        .container {
+            position: relative; z-index: 1; max-width: 1120px;
+            margin: 0 auto; padding: 90px 24px 40px;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, #f0f7ff 0%, #f8f5ff 50%, #fafcfd 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 40px 44px 36px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+        .hero-breadcrumb {
+            font-size: 12px; color: var(--text-muted); margin-bottom: 20px;
+        }
+        .hero-breadcrumb a {
+            color: var(--text-secondary); text-decoration: none;
+            transition: color var(--transition);
+        }
+        .hero-breadcrumb a:hover { color: var(--blue); }
+        .back-btn { position: fixed; left: 20px; top: 80px; z-index: 90; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--card); color: var(--text-secondary); text-decoration: none; font-size: 18px; transition: all var(--transition); box-shadow: var(--shadow-md); }
+        .back-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); transform: scale(1.05); }
+        .hero-title-row {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 28px; flex-wrap: wrap;
+        }
+        .hero-title-group { flex: 1; min-width: 280px; }
+        .hero-title-group h1 {
+            font-family: var(--font-display); font-size: 34px; font-weight: 700;
+            color: var(--text); line-height: 1.25; margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+        .hero-title-group .name-en {
+            font-size: 14px; color: var(--text-muted); margin-bottom: 18px;
+        }
+        .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .hero-tags .tag {
+            padding: 5px 14px; font-size: 12px; font-weight: 500;
+            border-radius: var(--radius-pill);
+            background: #fff; border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .hero-tags .tag.clc {
+            background: var(--violet-soft); border-color: #ddd6fe;
+            color: #7c3aed;
+        }
+        .hero-tags .tag.credit {
+            background: var(--amber-soft); border-color: #fde68a;
+            color: #d97706;
+        }
+        .hero-tags .tag.department {
+            background: var(--blue-soft); border-color: #bfdbfe;
+            color: #2563eb;
+        }
+        .hero-tags .tag.teacher {
+            background: var(--pink-soft); border-color: #fbcfe8;
+            color: #db2777;
+        }
+        .hero-desc {
+            margin-top: 16px; font-size: 14px; line-height: 1.8;
+            color: var(--text-secondary); max-width: 800px;
+        }
+
+        .hero-rating {
+            text-align: center;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 24px 32px; min-width: 180px;
+            box-shadow: var(--shadow-sm);
+        }
+        .hero-rating .score-label {
+            font-size: 11px; color: var(--text-muted); margin-bottom: 4px;
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 500;
+        }
+        .hero-rating .score-big {
+            font-family: var(--font-display); font-size: 48px; font-weight: 700;
+            color: var(--text); line-height: 1; letter-spacing: -1px;
+        }
+        .hero-rating .big-stars {
+            font-size: 26px; letter-spacing: 4px; margin: 10px 0 4px;
+            color: #e5e7eb; position: relative; display: inline-block;
+        }
+        .hero-rating .big-stars .fill {
+            position: absolute; top: 0; left: 0; overflow: hidden;
+            white-space: nowrap; color: var(--amber);
+        }
+        .hero-rating .count-label {
+            font-size: 12px; color: var(--text-muted);
+        }
+
+        /* Sections */
+        .section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow var(--transition);
+        }
+        .section:hover { box-shadow: var(--shadow); }
+        .section-title {
+            font-family: var(--font-display); font-size: 18px; font-weight: 600;
+            color: var(--text); margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .count-badge {
+            font-size: 11px; font-weight: 500;
+            color: var(--text-muted); background: var(--border-light);
+            padding: 3px 10px; border-radius: var(--radius-pill);
+        }
+
+        /* KP Cards */
+        .kp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 14px;
+        }
+        .kp-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px 18px 44px;
+            cursor: pointer; position: relative;
+            transition: all var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+        .kp-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--blue-light);
+            box-shadow: var(--shadow-md);
+        }
+        .kp-card .kp-name {
+            font-weight: 600; font-size: 15px; color: var(--text);
+            margin-bottom: 8px; line-height: 1.4;
+        }
+        .kp-card .kp-dim {
+            font-size: 10px; font-weight: 500;
+            padding: 3px 10px; border-radius: var(--radius-pill);
+            display: inline-block;
+        }
+        .kp-card .kp-dim.dim-culture {
+            background: var(--blue-soft); color: #2563eb; border: 1px solid #bfdbfe;
+        }
+        .kp-card .kp-dim.dim-institution {
+            background: var(--violet-soft); color: #7c3aed; border: 1px solid #ddd6fe;
+        }
+        .kp-card .kp-dim.dim-personal {
+            background: var(--amber-soft); color: #d97706; border: 1px solid #fde68a;
+        }
+        .kp-card .kp-dim.dim-computation {
+            background: var(--green-soft); color: #059669; border: 1px solid #a7f3d0;
+        }
+        .kp-card .kp-desc {
+            font-size: 13px; color: var(--text-muted);
+            margin-top: 10px; line-height: 1.6;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .kp-card .kp-category {
+            font-size: 11px; color: var(--text-muted); margin-top: 8px;
+        }
+        .kp-annotate-btn {
+            position: absolute; bottom: 10px; right: 10px;
+            width: 32px; height: 32px;
+            background: var(--blue-soft); border: 1px solid #bfdbfe;
+            color: var(--blue); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; cursor: pointer;
+            transition: all var(--transition); z-index: 2;
+        }
+        .kp-annotate-btn:hover {
+            background: var(--blue); color: #fff;
+            border-color: var(--blue);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Annotate Modal */
+        .annotate-overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 200; display: none; align-items: center; justify-content: center;
+        }
+        .annotate-overlay.show { display: flex; }
+        .annotate-modal {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 32px;
+            width: 90%; max-width: 480px;
+            box-shadow: var(--shadow-xl);
+            animation: scaleIn 0.3s ease-out;
+        }
+        .annotate-modal h3 {
+            font-family: var(--font-display); font-size: 20px; font-weight: 600;
+            color: var(--text); margin-bottom: 4px;
+        }
+        .annotate-modal .modal-sub {
+            font-size: 13px; color: var(--text-muted); margin-bottom: 22px;
+        }
+        .annotate-modal textarea {
+            width: 100%; padding: 14px 16px;
+            background: var(--stripe-bg); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text);
+            font-size: 14px; resize: vertical; min-height: 100px;
+            outline: none; font-family: var(--font-sans);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        .annotate-modal textarea:focus {
+            border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .modal-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
+        .modal-actions .btn-cancel {
+            padding: 10px 22px; background: var(--stripe-bg);
+            border: 1px solid var(--border); border-radius: var(--radius-pill);
+            color: var(--text-secondary); font-size: 13px; font-weight: 500;
+            cursor: pointer; transition: all var(--transition);
+        }
+        .modal-actions .btn-cancel:hover {
+            background: #f1f5f9; border-color: var(--text-muted);
+        }
+        .modal-actions .btn-save {
+            padding: 10px 26px; border: none;
+            background: linear-gradient(135deg, var(--blue), #2563eb);
+            border-radius: var(--radius-pill);
+            color: #fff; font-size: 13px; font-weight: 600;
+            cursor: pointer; letter-spacing: 0.3px;
+            transition: all var(--transition);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+        }
+        .modal-actions .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+        }
+        .modal-actions .btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .modal-msg {
+            padding: 10px 14px; font-size: 13px; margin-bottom: 12px;
+            border-radius: 8px; display: none;
+        }
+        .modal-msg.success {
+            display: block; background: var(--green-soft);
+            border: 1px solid #a7f3d0; color: #059669;
+        }
+        .modal-msg.error {
+            display: block; background: #fef2f2;
+            border: 1px solid #fecaca; color: #dc2626;
+        }
+
+        /* Review Section */
+        .rate-area {
+            display: flex; align-items: center; gap: 24px;
+            padding: 18px 24px;
+            background: var(--stripe-bg); border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm); margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .rate-stars { display: flex; gap: 4px; direction: rtl; }
+        .rate-stars .star {
+            color: #e5e7eb; cursor: pointer; user-select: none;
+            font-size: 36px; transition: all 0.2s ease;
+            line-height: 1;
+        }
+        .rate-stars .star:hover,
+        .rate-stars .star:hover ~ .star {
+            color: var(--amber); transform: scale(1.15);
+        }
+        .rate-stars .star.active,
+        .rate-stars .star.active ~ .star {
+            color: var(--amber);
+        }
+        .rate-info-text { font-size: 13px; color: var(--text-muted); }
+
+        .review-input-area { margin-bottom: 24px; }
+        .review-input-area textarea {
+            width: 100%; padding: 14px 16px;
+            background: var(--stripe-bg); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text);
+            font-size: 14px; resize: vertical; min-height: 80px;
+            outline: none; font-family: var(--font-sans);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        .review-input-area textarea:focus {
+            border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .review-input-area .review-actions {
+            display: flex; justify-content: flex-end; align-items: center;
+            gap: 12px; margin-top: 12px;
+        }
+        .char-count { font-size: 12px; color: var(--text-muted); }
+        .btn-submit {
+            padding: 10px 26px; border: none;
+            background: linear-gradient(135deg, var(--blue), #2563eb);
+            border-radius: var(--radius-pill);
+            color: #fff; font-size: 13px; font-weight: 600;
+            cursor: pointer; letter-spacing: 0.3px;
+            transition: all var(--transition);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+        }
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+        }
+        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .filter-btn { color: var(--text-secondary); background: transparent; font-family: var(--font-sans); border-radius: var(--radius-pill); }
+        .filter-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+        /* Review Cards */
+        .reviews-masonry { display: flex; flex-direction: column; gap: 12px; }
+        .review-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            transition: all var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+        .review-card:hover {
+            box-shadow: var(--shadow);
+            border-color: #cbd5e1;
+        }
+        .review-card.is-own {
+            border-color: #bfdbfe; background: #f8fbff;
+        }
+        .review-card .review-header {
+            display: flex; justify-content: space-between;
+            align-items: flex-start; margin-bottom: 8px;
+        }
+        .review-card .review-user {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .review-card .review-avatar {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--blue), var(--violet));
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center;
+            font-weight: 700; font-size: 13px; color: #fff;
+        }
+        .review-card .review-name {
+            font-size: 14px; font-weight: 600; color: var(--text);
+        }
+        .review-card .review-badge {
+            font-size: 10px; font-weight: 500;
+            padding: 2px 8px; border-radius: var(--radius-pill);
+            background: var(--blue-soft); color: var(--blue);
+            border: 1px solid #bfdbfe;
+        }
+        .review-card .review-stars {
+            color: var(--amber); font-size: 13px; letter-spacing: 1px;
+        }
+        .review-card .review-time {
+            font-size: 11px; color: var(--text-muted);
+        }
+        .review-card .review-content {
+            font-size: 14px; color: var(--text-secondary);
+            line-height: 1.8; margin-top: 8px;
+        }
+
+        /* KP Detail Modal */
+        .kp-detail-overlay {
+            position: fixed; inset: 0;
+            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(6px);
+            z-index: 300; display: none; align-items: center;
+            justify-content: center; padding: 20px;
+        }
+        .kp-detail-overlay.show { display: flex; }
+        .kp-detail-modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px; width: 90%; max-width: 600px;
+            max-height: 85vh; overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            animation: scaleIn 0.3s ease-out;
+        }
+        .kp-detail-close {
+            float: right; width: 32px; height: 32px;
+            background: var(--stripe-bg); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text-secondary);
+            font-size: 16px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition);
+        }
+        .kp-detail-close:hover {
+            background: #fef2f2; border-color: #fecaca; color: #dc2626;
+        }
+        .kp-detail-modal h2 {
+            font-family: var(--font-display); font-size: 22px; font-weight: 600;
+            color: var(--text); margin-bottom: 4px; padding-right: 40px;
+        }
+        .kp-detail-modal .kp-sub {
+            font-size: 13px; color: var(--text-muted); margin-bottom: 22px;
+        }
+        .kp-detail-info {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 12px; margin-bottom: 20px;
+        }
+        .kp-detail-info .info-item {
+            background: var(--stripe-bg); border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm); padding: 14px 18px;
+        }
+        .kp-detail-info .info-label {
+            font-size: 10px; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;
+        }
+        .kp-detail-info .info-value {
+            font-size: 14px; font-weight: 600; color: var(--text);
+        }
+        .kp-detail-desc {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.9;
+            margin-bottom: 22px; padding: 16px;
+            background: var(--stripe-bg); border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+        }
+        .kp-detail-section-title {
+            font-size: 12px; font-weight: 600; color: var(--text-secondary);
+            margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .kp-detail-annotations {
+            max-height: 220px; overflow-y: auto; margin-bottom: 16px;
+        }
+        .kp-detail-ann-item {
+            padding: 12px 14px; border-bottom: 1px solid var(--border-light);
+        }
+        .kp-detail-ann-item .ann-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 4px;
+        }
+        .kp-detail-ann-item .ann-user {
+            font-size: 13px; font-weight: 600; color: var(--blue);
+        }
+        .kp-detail-ann-item .ann-time {
+            font-size: 11px; color: var(--text-muted);
+        }
+        .kp-detail-ann-item .ann-content {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.7;
+        }
+        .kp-detail-annotate-form {
+            background: var(--stripe-bg); border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm); padding: 18px; margin-top: 8px;
+        }
+        .kp-detail-annotate-form textarea {
+            width: 100%; padding: 12px 14px;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); font-size: 13px;
+            resize: vertical; min-height: 70px; outline: none;
+            font-family: var(--font-sans);
+            transition: border-color var(--transition);
+        }
+        .kp-detail-annotate-form textarea:focus {
+            border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .kp-detail-annotate-form .form-actions {
+            display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            display: flex; gap: 14px; flex-wrap: wrap;
+            justify-content: center; margin: 8px 0 32px;
+        }
+        .bottom-nav-btn {
+            display: flex; align-items: center; gap: 12px;
+            padding: 18px 32px;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 14px; font-weight: 600;
+            transition: all var(--transition);
+            min-width: 200px; justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+        .bottom-nav-btn:hover {
+            border-color: var(--blue); color: var(--blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .bottom-nav-btn .nav-icon { font-size: 22px; }
+        .bottom-nav-btn .nav-label-small {
+            font-size: 11px; font-weight: 400; color: var(--text-muted);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center; padding: 32px 20px;
+            font-size: 12px; color: var(--text-muted);
+            border-top: 1px solid var(--border-light);
+            margin-top: 20px; position: relative; z-index: 1;
+        }
+
+        .login-hint {
+            text-align: center; padding: 24px 0;
+            font-size: 13px; color: var(--text-muted);
+        }
+        .login-hint a { color: var(--blue); text-decoration: none; font-weight: 500; }
+        .login-hint a:hover { text-decoration: underline; }
+        .msg {
+            padding: 12px 16px; margin-bottom: 14px;
+            font-size: 13px; border-radius: 8px; display: none;
+        }
+        .msg.success {
+            display: block; background: var(--green-soft);
+            border: 1px solid #a7f3d0; color: #059669;
+        }
+        .msg.error {
+            display: block; background: #fef2f2;
+            border: 1px solid #fecaca; color: #dc2626;
+        }
+        .reviews-empty {
+            text-align: center; padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        /* Loading */
+        .loading-wrap { text-align: center; padding: 80px 20px; }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid var(--border-light);
+            border-top-color: var(--blue); border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 18px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-wrap p { font-size: 14px; color: var(--text-muted); }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border); border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 20px; }
+            .hero-banner { padding: 28px 24px; }
+            .hero-rating { min-width: unset; width: 100%; }
+            .section { padding: 20px; }
+            .kp-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+            .kp-detail-info { grid-template-columns: 1fr; }
+            .bottom-nav-btn { min-width: 160px; padding: 14px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="navbar"></div>
+
+    <a id="backBtn" class="back-btn" title="返回" href="#">&#x2190;</a>
+    <div class="container" id="appContainer">
+        <div class="loading-wrap" id="loadingIndicator">
+            <div class="spinner"></div>
+            <p>加载课程数据...</p>
+        </div>
+    </div>
+
+    <!-- Annotate modal -->
+    <div class="annotate-overlay" id="annotateOverlay">
+        <div class="annotate-modal">
+            <h3 id="annotateModalTitle">添加个人标注</h3>
+            <div class="modal-sub" id="annotateModalSub">为知识点添加你的理解与笔记</div>
+            <div id="annotateModalMsg" class="modal-msg"></div>
+            <textarea id="annotateModalInput" placeholder="写下你的标注内容..." maxlength="500"></textarea>
+            <div style="text-align:right;font-size:12px;color:var(--text-muted);margin-top:6px;"><span id="annotateCharCount">0</span>/500</div>
+            <div class="modal-actions">
+                <button class="btn-cancel" style="background:#fef2f2;border-color:#fecaca;color:#dc2626;display:none" id="annotateDelBtn" onclick="deleteAnnotation()">删除</button>
+                <div style="flex:1"></div>
+                <button class="btn-cancel" onclick="closeAnnotateModal()">取消</button>
+                <button class="btn-save" id="annotateSaveBtn" onclick="saveAnnotateModal()">保存标注</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- KP detail modal -->
+    <div class="kp-detail-overlay" id="kpDetailOverlay">
+        <div class="kp-detail-modal">
+            <button class="kp-detail-close" onclick="closeKpDetail()">&#10005;</button>
+            <h2 id="kpDetailName">知识点名称</h2>
+            <div class="kp-sub" id="kpDetailSub">学科类别 - 维度</div>
+            <div class="kp-detail-info">
+                <div class="info-item"><div class="info-label">学科类别</div><div class="info-value" id="kpDetailCategory">--</div></div>
+                <div class="info-item"><div class="info-label">四维分类</div><div class="info-value" id="kpDetailDimension">--</div></div>
+            </div>
+            <div class="kp-detail-desc" id="kpDetailDesc">暂无描述</div>
+            <div class="kp-detail-section-title">用户标注 <span class="count-badge" id="kpDetailAnnCount">0</span></div>
+            <div class="kp-detail-annotations" id="kpDetailAnnotations"><div class="kp-detail-ann-empty">加载中...</div></div>
+            <div class="kp-detail-annotate-form" id="kpDetailAnnForm">
+                <div id="kpDetailAnnMsg" class="modal-msg"></div>
+                <textarea id="kpDetailAnnInput" placeholder="添加你的标注..." maxlength="500"></textarea>
+                <div class="form-actions">
+                    <button class="btn-cancel" style="padding:8px 18px;font-size:12px;" onclick="document.getElementById('kpDetailAnnInput').value=''">清空</button>
+                    <button class="btn-save" style="padding:8px 22px;font-size:12px;" id="kpDetailAnnBtn" onclick="saveKpDetailAnnotation()">提交标注</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">&copy; 2026 课程知识图谱社区系统 - 信息组织大作业 - 南京大学信息管理学院</div>
+
+    <script src="/js/navbar.js"></script>
+    <script>
+    var backBtn = document.getElementById('backBtn');
+    if(backBtn) {
+        backBtn.onclick = function() {
+            if(typeof Navbar !== 'undefined' && Navbar.goBack) {
+                Navbar.goBack();
+            } else if(window.history.length > 1) {
+                history.back();
+            } else {
+                location.href = '/';
+            }
+            return false;
+        };
+    }
+
+    const courseId = parseInt(window.location.pathname.split('/').pop());
+    let currentUser = null;
+    let courseData = null;
+    let annotatingKpId = null;
+    let detailKpId = null;
+
+    // 从 navbar 同步登录状态
+    async function syncAuth() {
+        try {
+            const res = await fetch('/api/auth/status');
+            const data = await res.json();
+            if (data.authenticated) currentUser = data.user;
+        } catch(e) {}
+    }
+
+    async function loadCourse() {
+        const container = document.getElementById('appContainer');
+        try {
+            if (!courseId || isNaN(courseId)) { container.innerHTML = renderError('无效的课程ID'); return; }
+            const res = await fetch('/api/courses/'+courseId);
+            if (!res.ok) { container.innerHTML = renderError('服务器返回 '+res.status); return; }
+            const data = await res.json();
+            if (data.success && data.course) {
+                courseData = data.course;
+                try { renderPage(courseData); } catch(rerr) {
+                    container.innerHTML = renderError('渲染失败: '+rerr.message);
+                }
+            } else {
+                container.innerHTML = renderError(data.message || '课程不存在');
+            }
+        } catch (e) {
+            container.innerHTML = renderError('加载失败: '+e.message);
+        }
+    }
+
+    function renderError(msg) {
+        return `<div style="text-align:center;padding:80px 20px;"><p style="color:var(--text-muted);font-size:15px;">${msg}</p><button class="btn-cancel" style="margin-top:16px;padding:10px 24px;" onclick="location.reload()">重新加载</button></div>`;
+    }
+
+    function renderPage(c) {
+        const container = document.getElementById('appContainer');
+        container.innerHTML = `
+            <div class="hero-banner animate-in">
+                <div class="hero-breadcrumb" style="display:flex;align-items:center;gap:10px">
+                    <a href="/">首页</a> <span style="color:var(--text-muted);margin:0 6px;">/</span>
+                    <a href="/">课程列表</a> <span style="color:var(--text-muted);margin:0 6px;">/</span>
+                    <span style="color:var(--text-secondary);">${c.name}</span>
+                </div>
+                <div class="hero-title-row">
+                    <div class="hero-title-group">
+                        <h1>${c.name}</h1>
+                        <div class="name-en">${c.name_en || ''}</div>
+                        <div class="hero-tags">
+                            <span class="tag clc">${c.clc_number || '未分类'}</span>
+                            <span class="tag credit">${c.credit} 学分</span>
+                            ${c.department ? `<span class="tag department">${c.department}</span>` : ''}
+                            ${c.teacher ? `<span class="tag teacher">${c.teacher}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="hero-rating">
+                        <div class="score-label">综合评分</div>
+                        <div class="score-big">${c.avg_score != null ? c.avg_score : '--'}</div>
+                        <div class="big-stars" id="bigStarsContainer">
+                            &#9733;&#9733;&#9733;&#9733;&#9733;
+                            <span class="fill" id="bigStarsFill" style="width:${(c.avg_score != null ? (c.avg_score / 5 * 100) : 0)}%;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                        </div>
+                        <div class="count-label">${c.rating_count || 0} 人评价</div>
+                    </div>
+                </div>
+                <div class="hero-desc">${c.description || '暂无课程简介'}</div>
+            </div>
+            <div class="section animate-in">
+                <div class="section-title">
+                    知识点 <span class="count-badge">${c.knowledge_points ? c.knowledge_points.length : 0} 个</span>
+                </div>
+                <div class="kp-grid" id="kpGrid">${renderKpCards(c.knowledge_points || [])}</div>
+            </div>
+            <!-- 多维评分 -->
+            <div class="section animate-in">
+                <div class="section-title">多维评分</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px;" id="dimRatingGrid">
+                    ${['考试难度','作业量','实用性','就业帮助'].map((label,i)=>{
+                        const keys=['avg_exam_diff','avg_workload','avg_practicality','avg_career_help'];
+                        const val=c[keys[i]]||0;
+                        const userDim=c.user_dim_rating;
+                        const uvals=userDim?[userDim.exam_difficulty,userDim.workload,userDim.practicality,userDim.career_help]:null;
+                        return `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;">
+                            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">${label}</div>
+                            <div style="font-family:var(--font-display);font-size:28px;font-weight:700;color:${val>=3.5?'var(--green)':val>=2.5?'var(--amber)':'var(--pink)'};">${val||'--'}</div>
+                            <div style="font-size:10px;color:var(--text-muted);margin:4px 0 8px;">/ 5</div>
+                            ${currentUser?`<div style="display:flex;gap:2px;justify-content:center;font-size:18px;cursor:pointer;">${[1,2,3,4,5].map(s=>`<span style="color:${uvals&&s<=uvals[i]?'var(--amber)':'#e5e7eb'};" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='${uvals&&s<=uvals[i]?'var(--amber)':'#e5e7eb'}'" onclick="event.stopPropagation();dimRate(${c.id},${i+1},${s})">&#9733;</span>`).join('')}</div>`:`<div style="font-size:10px;color:var(--text-muted);">登录后可评分</div>`}
+                        </div>`;
+                    }).join('')}
+                </div>
+                <div id="dimRateMsg" style="text-align:center;font-size:12px;color:var(--text-muted);display:none;"></div>
+            </div>
+            <!-- 课程标签 -->
+            <div class="section animate-in">
+                <div class="section-title">课程标签 <span class="count-badge">为课程投票</span></div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;" id="tagArea">
+                    ${['考研推荐','硬核专业核心','水课','论文多'].map(t=>{
+                        const hasTag=c.tags&&c.tags.includes(t);
+                        return `<span class="tag" style="padding:8px 18px;border-radius:999px;border:1px solid ${hasTag?'var(--blue)':'var(--border)'};background:${hasTag?'var(--blue-soft)':'transparent'};color:${hasTag?'var(--blue)':'var(--text-secondary)'};cursor:pointer;font-size:13px;transition:transform .2s;" onclick="tagCourse(${c.id},'${t}')">${t}</span>`;
+                    }).join('')}
+                </div>
+            </div>
+            <!-- 前置/后置课程 -->
+            ${(c.prerequisites&&c.prerequisites.length)||(c.postrequisites&&c.postrequisites.length)?`
+            <div class="section animate-in">
+                <div class="section-title">课程关联 <span class="count-badge">前置 · 后置</span></div>
+                <div style="display:flex;gap:20px;flex-wrap:wrap;">
+                    ${c.prerequisites&&c.prerequisites.length?`<div style="flex:1;min-width:200px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">&#8592; 先修基础课程</div>${c.prerequisites.map(p=>`<a href="/course/${p.id}" style="display:inline-block;padding:8px 16px;margin:4px;border-radius:8px;border:1px solid var(--border);background:var(--blue-soft);color:var(--blue);text-decoration:none;font-size:13px;transition:transform .2s;">${p.name}</a>`).join('')}</div>`:''}
+                    ${c.postrequisites&&c.postrequisites.length?`<div style="flex:1;min-width:200px;"><div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">&#8594; 后续进阶课程</div>${c.postrequisites.map(p=>`<a href="/course/${p.id}" style="display:inline-block;padding:8px 16px;margin:4px;border-radius:8px;border:1px solid var(--border);background:var(--green-soft);color:var(--green);text-decoration:none;font-size:13px;transition:transform .2s;">${p.name}</a>`).join('')}</div>`:''}
+                </div>
+            </div>`:''}
+            <!-- 问答区 -->
+            <div class="section animate-in">
+                <div class="section-title">问答区 <span class="count-badge" id="qCount">${c.questions?c.questions.length:0} 个问题</span></div>
+                <div style="display:flex;gap:8px;margin-bottom:16px;">
+                    <button class="filter-btn active" onclick="switchQType('选课咨询',this)" style="padding:6px 16px;border-radius:999px;border:1px solid var(--border);cursor:pointer;font-size:12px;">选课咨询</button>
+                    <button class="filter-btn" onclick="switchQType('知识点答疑',this)" style="padding:6px 16px;border-radius:999px;border:1px solid var(--border);cursor:pointer;font-size:12px;">知识点答疑</button>
+                    ${currentUser?`<button style="margin-left:auto;padding:6px 16px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff;cursor:pointer;font-size:12px;font-weight:600;" onclick="showAskModal()">+ 提问</button>`:''}
+                </div>
+                <div id="questionList">${renderQuestions(c.questions||[],'选课咨询')}</div>
+            </div>
+            <!-- 评分与点评 -->
+            <div class="section animate-in">
+                <div class="section-title">
+                    评分与点评 <span class="count-badge">${c.reviews ? c.reviews.length : 0} 条</span>
+                </div>
+                ${renderRateReview(c)}
+            </div>
+            <div class="bottom-nav animate-in">
+                <a href="/visualization" class="bottom-nav-btn">
+                    <span class="nav-icon">&#9671;</span>
+                    <span><div>查看知识星图</div><div class="nav-label-small">可视化知识网络</div></span>
+                </a>
+                <a href="/analysis" class="bottom-nav-btn">
+                    <span class="nav-icon">&#9776;</span>
+                    <span><div>数据分析</div><div class="nav-label-small">课程与知识点统计</div></span>
+                </a>
+            </div>
+        `;
+    }
+
+    function renderKpCards(kps) {
+        if (!kps.length) return '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--text-muted);font-size:14px;">暂无知识点数据</div>';
+        return kps.map(kp => {
+            const dimClass = kp.dimension ? `dim-${kp.dimension.toLowerCase()}` : 'dim-culture';
+            const dimMap = {'文化':'文化','机构':'机构','个人':'个人','计算':'计算'};
+            const dimLabel = dimMap[kp.dimension] || kp.dimension || '未分类';
+            return `
+                <div class="kp-card" onclick="openKpDetail(${kp.id})">
+                    <div class="kp-name">${kp.name}</div>
+                    <span class="kp-dim ${dimClass}">${dimLabel}</span>
+                    <div class="kp-desc">${kp.description || '暂无描述'}</div>
+                    <div class="kp-category">${kp.category || ''}</div>
+                    <button class="kp-annotate-btn" onclick="event.stopPropagation(); openAnnotateModal(${kp.id}, '${kp.name.replace(/'/g, "\\'")}')" title="添加个人标注">&#9998;</button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderRateReview(c) {
+        const hasRated = c.user_rating != null;
+        const userScore = c.user_rating || 0;
+        const reviews = c.reviews || [];
+        let ratingHTML = '';
+        if (currentUser) {
+            ratingHTML = `
+                <div class="rate-area">
+                    <div class="rate-stars" id="rateStars" data-value="${userScore}">
+                        <span class="star ${userScore >= 5 ? 'active' : ''}" data-val="5" onclick="rateCourse(5)">&#9733;</span>
+                        <span class="star ${userScore >= 4 ? 'active' : ''}" data-val="4" onclick="rateCourse(4)">&#9733;</span>
+                        <span class="star ${userScore >= 3 ? 'active' : ''}" data-val="3" onclick="rateCourse(3)">&#9733;</span>
+                        <span class="star ${userScore >= 2 ? 'active' : ''}" data-val="2" onclick="rateCourse(2)">&#9733;</span>
+                        <span class="star ${userScore >= 1 ? 'active' : ''}" data-val="1" onclick="rateCourse(1)">&#9733;</span>
+                    </div>
+                    <span class="rate-info-text">${hasRated ? '你已评分' : '点击星星评分'}</span>
+                </div>`;
+        } else {
+            ratingHTML = `<div class="rate-area" style="justify-content:center;"><span class="rate-info-text"><a href="/login" style="color:var(--blue);text-decoration:none;font-weight:500;">登录</a> 后即可评分</span></div>`;
+        }
+        let reviewFormHTML = '';
+        if (currentUser) {
+            reviewFormHTML = `
+                <div class="review-input-area">
+                    <div id="reviewMsg" class="msg"></div>
+                    <textarea id="reviewInput" placeholder="分享你对这门课的见解与感受..." maxlength="500" oninput="updateReviewCharCount()"></textarea>
+                    <div class="review-actions">
+                        <span class="char-count"><span id="reviewCharCount">0</span>/500</span>
+                        <button class="btn-submit" id="reviewSubmitBtn" onclick="submitReview()">发表点评</button>
+                    </div>
+                </div>`;
+        } else {
+            reviewFormHTML = `<div class="login-hint"><a href="/login">登录</a> 后即可发表点评</div>`;
+        }
+        let reviewsHTML = '';
+        if (reviews.length === 0) {
+            reviewsHTML = '<div class="reviews-empty">还没有人点评，快来写下第一条吧</div>';
+        } else {
+            reviewsHTML = `<div class="reviews-masonry">${reviews.map(r => {
+                const isOwn = currentUser && (currentUser.id === r.user_id || currentUser.username === r.username);
+                const stars = r.score ? '<div class="review-stars">' + '\u2605'.repeat(r.score) + '\u2606'.repeat(5 - r.score) + '</div>' : '';
+                return `<div class="review-card ${isOwn ? 'is-own' : ''}">
+                    <div class="review-header">
+                        <div class="review-user"><div class="review-avatar">${(r.display_name || r.username || '匿').charAt(0)}</div><span class="review-name">${r.display_name || r.username || '匿名用户'}</span>${isOwn ? '<span class="review-badge">我</span>' : ''}</div>
+                        <span class="review-time">${formatTime(r.created_at)}</span>
+                    </div>${stars}
+                    <div class="review-content">${r.content || ''}</div>
+                    <div style="margin-top:8px;display:flex;gap:12px;align-items:center;">
+                        <button class="like-btn" data-id="${r.id}" onclick="toggleReviewLike(${r.id},this)" style="background:none;border:1px solid var(--border);border-radius:999px;padding:3px 12px;font-size:12px;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;gap:4px;transition:transform .2s;" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">&#9825; <span class="like-count">${r.like_count||0}</span></button>
+                    </div>
+                </div>`;
+            }).join('')}</div>`;
+        }
+        return ratingHTML + reviewFormHTML + reviewsHTML;
+    }
+
+    let ratingInProgress = false;
+    async function rateCourse(score) {
+        if (!currentUser) { window.location.href = '/login'; return; }
+        if (ratingInProgress) return; ratingInProgress = true;
+        try {
+            const res = await fetch(`/api/courses/${courseId}/rate`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({score})
+            });
+            await refreshCourse();
+        } catch(e) {} ratingInProgress = false;
+    }
+
+    async function submitReview() {
+        const input = document.getElementById('reviewInput');
+        const content = input.value.trim(); if (!content) return;
+        const btn = document.getElementById('reviewSubmitBtn');
+        btn.disabled = true; btn.textContent = '发表中...';
+        try {
+            const res = await fetch(`/api/courses/${courseId}/review`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({content})
+            });
+            const data = await res.json();
+            const msg = document.getElementById('reviewMsg');
+            if (data.success) {
+                msg.className = 'msg success'; msg.textContent = '点评发布成功！';
+                input.value = ''; updateReviewCharCount(); await refreshCourse();
+            } else { msg.className = 'msg error'; msg.textContent = data.message || '点评发布失败，请重试'; }
+        } catch(e) {
+            document.getElementById('reviewMsg').className = 'msg error';
+            document.getElementById('reviewMsg').textContent = '网络错误，请重试';
+        }
+        btn.disabled = false; btn.textContent = '发表点评';
+    }
+
+    function updateReviewCharCount() {
+        const el = document.getElementById('reviewInput');
+        if (el) document.getElementById('reviewCharCount').textContent = el.value.length;
+    }
+
+    async function refreshCourse() {
+        try {
+            const res = await fetch(`/api/courses/${courseId}`);
+            const data = await res.json();
+            if (data.success) { courseData = data.course; renderPage(courseData); }
+        } catch(e) {}
+    }
+
+    function openAnnotateModal(kpId, kpName) {
+        annotatingKpId = kpId;
+        document.getElementById('annotateModalTitle').textContent = `标注：${kpName}`;
+        document.getElementById('annotateModalSub').textContent = `为知识点「${kpName}」添加你的理解与笔记`;
+        document.getElementById('annotateModalInput').value = '';
+        document.getElementById('annotateModalMsg').className = 'modal-msg';
+        document.getElementById('annotateCharCount').textContent = '0';
+        document.getElementById('annotateOverlay').classList.add('show');
+        if (currentUser) loadExistingAnnotation(kpId);
+    }
+
+    async function loadExistingAnnotation(kpId) {
+        try {
+            const res = await fetch(`/api/knowledge-points/${kpId}`);
+            const data = await res.json();
+            var delBtn = document.getElementById('annotateDelBtn');
+            if (data.success && data.knowledge_point && data.knowledge_point.user_annotation && data.knowledge_point.user_annotation.content) {
+                document.getElementById('annotateModalInput').value = data.knowledge_point.user_annotation.content;
+                document.getElementById('annotateCharCount').textContent = data.knowledge_point.user_annotation.content.length;
+                if (delBtn) delBtn.style.display = 'block';
+            } else {
+                if (delBtn) delBtn.style.display = 'none';
+            }
+        } catch(e) {}
+    }
+
+    async function deleteAnnotation() {
+        if (!annotatingKpId) return;
+        if (!confirm('确定删除此标注？')) return;
+        try {
+            const res = await fetch(`/api/knowledge-points/${annotatingKpId}/annotate`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.success) {
+                closeAnnotateModal();
+                if (detailKpId === annotatingKpId) refreshKpDetail(detailKpId);
+            }
+        } catch(e) {}
+    }
+
+    function closeAnnotateModal() { document.getElementById('annotateOverlay').classList.remove('show'); annotatingKpId = null; }
+
+    async function saveAnnotateModal() {
+        if (!currentUser) { window.location.href = '/login'; return; }
+        if (!annotatingKpId) return;
+        const content = document.getElementById('annotateModalInput').value.trim();
+        if (!content) { const msg = document.getElementById('annotateModalMsg'); msg.className = 'modal-msg error'; msg.textContent = '请输入标注内容'; return; }
+        const btn = document.getElementById('annotateSaveBtn'); btn.disabled = true; btn.textContent = '保存中...';
+        try {
+            const res = await fetch(`/api/knowledge-points/${annotatingKpId}/annotate`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({content})
+            });
+            const data = await res.json();
+            const msg = document.getElementById('annotateModalMsg');
+            if (data.success) { msg.className = 'modal-msg success'; msg.textContent = '标注已保存！'; setTimeout(() => { closeAnnotateModal(); if (detailKpId === annotatingKpId) refreshKpDetail(detailKpId); }, 600); }
+            else { msg.className = 'modal-msg error'; msg.textContent = data.message || '保存失败，请重试'; }
+        } catch(e) { const msg = document.getElementById('annotateModalMsg'); msg.className = 'modal-msg error'; msg.textContent = '网络错误，请重试'; }
+        btn.disabled = false; btn.textContent = '保存标注';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const annInput = document.getElementById('annotateModalInput');
+        if (annInput) annInput.addEventListener('input', function() { document.getElementById('annotateCharCount').textContent = this.value.length; });
+    });
+
+    async function openKpDetail(kpId) {
+        detailKpId = kpId;
+        const overlay = document.getElementById('kpDetailOverlay'); overlay.classList.add('show');
+        document.getElementById('kpDetailName').textContent = '加载中...';
+        document.getElementById('kpDetailSub').textContent = '';
+        document.getElementById('kpDetailCategory').textContent = '--';
+        document.getElementById('kpDetailDimension').textContent = '--';
+        document.getElementById('kpDetailDesc').textContent = '加载中...';
+        document.getElementById('kpDetailAnnotations').innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);">加载中...</div>';
+        document.getElementById('kpDetailAnnCount').textContent = '0';
+        document.getElementById('kpDetailAnnInput').value = '';
+        document.getElementById('kpDetailAnnMsg').className = 'modal-msg';
+        if (!currentUser) { document.getElementById('kpDetailAnnForm').style.display = 'none'; }
+        else { document.getElementById('kpDetailAnnForm').style.display = 'block'; }
+        try {
+            const res = await fetch(`/api/knowledge-points/${kpId}`);
+            const data = await res.json();
+            if (data.success && data.knowledge_point) {
+                const kp = data.knowledge_point;
+                document.getElementById('kpDetailName').textContent = kp.name;
+                document.getElementById('kpDetailSub').textContent = `${kp.category || '未分类'} - ${kp.dimension || '未分类'}`;
+                document.getElementById('kpDetailCategory').textContent = kp.category || '--';
+                document.getElementById('kpDetailDimension').textContent = kp.dimension || '--';
+                document.getElementById('kpDetailDesc').textContent = kp.description || '暂无描述';
+                const annotations = kp.annotations || [];
+                document.getElementById('kpDetailAnnCount').textContent = annotations.length;
+                if (annotations.length === 0) { document.getElementById('kpDetailAnnotations').innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);">暂无用户标注</div>'; }
+                else {
+                    document.getElementById('kpDetailAnnotations').innerHTML = annotations.map(a => `<div class="kp-detail-ann-item"><div class="ann-header"><span class="ann-user">${a.display_name || a.username || '匿名用户'}</span><span class="ann-time">${formatTime(a.created_at)}</span></div><div class="ann-content">${a.content}</div></div>`).join('');
+                }
+                if (kp.user_annotation && kp.user_annotation.content) { document.getElementById('kpDetailAnnInput').value = kp.user_annotation.content; }
+                document.querySelector('.kp-detail-modal').scrollTop = 0;
+            }
+        } catch(e) { document.getElementById('kpDetailName').textContent = '加载失败'; }
+    }
+
+    function closeKpDetail() { document.getElementById('kpDetailOverlay').classList.remove('show'); detailKpId = null; }
+    async function refreshKpDetail(kpId){
+        try {
+            const res = await fetch('/api/knowledge-points/'+kpId);
+            const data = await res.json();
+            if (!data.success || !data.knowledge_point) return;
+            const kp = data.knowledge_point;
+            const annotations = kp.annotations || [];
+            document.getElementById('kpDetailAnnCount').textContent = annotations.length;
+            document.getElementById('kpDetailAnnotations').innerHTML = annotations.length === 0
+                ? '<div style="text-align:center;padding:20px;color:var(--text-muted);">暂无用户标注</div>'
+                : annotations.map(a => '<div class="kp-detail-ann-item"><div class="ann-header"><span class="ann-user">'+(a.display_name||a.username||'匿名用户')+'</span><span class="ann-time">'+formatTime(a.created_at)+'</span></div><div class="ann-content">'+a.content+'</div></div>').join('');
+            if (kp.user_annotation && kp.user_annotation.content) {
+                document.getElementById('kpDetailAnnInput').value = kp.user_annotation.content;
+            }
+        } catch(e) {}
+    }
+
+    async function saveKpDetailAnnotation() {
+        if (!currentUser || !detailKpId) return;
+        const content = document.getElementById('kpDetailAnnInput').value.trim();
+        if (!content) { const msg = document.getElementById('kpDetailAnnMsg'); msg.className = 'modal-msg error'; msg.textContent = '请输入标注内容'; return; }
+        const btn = document.getElementById('kpDetailAnnBtn'); btn.disabled = true; btn.textContent = '提交中...';
+        try {
+            const res = await fetch(`/api/knowledge-points/${detailKpId}/annotate`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({content})
+            });
+            const data = await res.json();
+            const msg = document.getElementById('kpDetailAnnMsg');
+            if (data.success) { msg.className = 'modal-msg success'; msg.textContent = '标注已保存！'; setTimeout(() => openKpDetail(detailKpId), 600); }
+            else { msg.className = 'modal-msg error'; msg.textContent = data.message || '保存失败'; }
+        } catch(e) { const msg = document.getElementById('kpDetailAnnMsg'); msg.className = 'modal-msg error'; msg.textContent = '网络错误'; }
+        btn.disabled = false; btn.textContent = '提交标注';
+    }
+
+    document.addEventListener('click', function(e) {
+        const annotateOverlay = document.getElementById('annotateOverlay');
+        if (annotateOverlay.classList.contains('show') && e.target === annotateOverlay) closeAnnotateModal();
+        const kpOverlay = document.getElementById('kpDetailOverlay');
+        if (kpOverlay.classList.contains('show') && e.target === kpOverlay) closeKpDetail();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            if (document.getElementById('annotateOverlay').classList.contains('show')) closeAnnotateModal();
+            if (document.getElementById('kpDetailOverlay').classList.contains('show')) closeKpDetail();
+        }
+    });
+
+    function formatTime(dateStr) {
+        if (!dateStr) return '';
+        try {
+            const d = new Date(dateStr);
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        } catch(e) { return dateStr; }
+    }
+
+    // ===== 新增功能函数 =====
+    let currentQType='选课咨询';
+    function renderQuestions(qs,type){
+        const filtered=qs.filter(q=>q.qtype===type);
+        if(!filtered.length) return '<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:14px;">暂无问题</div>';
+        return filtered.map(q=>{
+            const answerList = q.answers||[];
+            const answerCount = q.answer_count !== undefined ? q.answer_count : answerList.length;
+            return `
+            <div style="background:var(--card);border:1px solid var(--border-light);border-radius:10px;padding:16px;margin-bottom:10px;cursor:pointer;" onclick="toggleAnswer(${q.id})">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div><span style="font-weight:600;font-size:14px;color:var(--text);">${q.title}</span>
+                    <span style="font-size:11px;color:var(--text-muted);margin-left:8px;">${q.display_name||q.username||'匿名'}</span>
+                    ${currentUser&&currentUser.id===q.user_id?`<button style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:11px;padding:2px 6px;margin-left:6px" onclick="event.stopPropagation();deleteQuestion(${q.id})" title="删除提问">x</button>`:''}</div>
+                    <span style="font-size:11px;color:var(--text-muted);">${answerCount} 回答</span>
+                </div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">${q.content||''}</div>
+                <div id="answers-${q.id}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light);">
+                    ${answerList.length?answerList.map(a=>`<div style="padding:8px 0;border-bottom:1px solid var(--border-light);font-size:13px;display:flex;align-items:flex-start;gap:8px"><div style="flex:1"><span style="font-weight:600;color:var(--blue);font-size:12px;">${a.display_name||a.username||'匿名'}</span><span style="color:var(--text-secondary);margin-left:8px;">${a.content}</span></div>${currentUser&&currentUser.id===a.user_id?`<button style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:11px;padding:2px 6px" onclick="event.stopPropagation();deleteAnswer(${a.id},${q.id})" title="删除">x</button>`:''}</div>`).join(''):'<div style="text-align:center;padding:10px;color:var(--text-muted);font-size:13px;">暂无回答</div>'}
+                    ${currentUser?`<div style="margin-top:8px;display:flex;gap:8px;" onclick="event.stopPropagation()"><input id="ansInput-${q.id}" style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--stripe-bg);font-size:13px;outline:none;" placeholder="写下你的回答..." onclick="event.stopPropagation()"><button style="padding:8px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff;cursor:pointer;font-size:12px;" onclick="event.stopPropagation();submitAnswer(${q.id})">回答</button></div>`:''}
+                </div>
+            </div>`}).join('');
+    }
+    function switchQType(type,btn){
+        currentQType=type;
+        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+        const c=courseData;
+        if(c&&c.questions) document.getElementById('questionList').innerHTML=renderQuestions(c.questions,type);
+    }
+    function toggleAnswer(id){
+        const el=document.getElementById('answers-'+id);
+        if(el) el.style.display=el.style.display==='none'?'block':'none';
+    }
+    function showAskModal(){
+        if(!currentUser){window.location.href='/login';return;}
+        const title=prompt('问题标题：');
+        if(!title) return;
+        const content=prompt('问题描述（可选）：');
+        fetch('/api/courses/'+courseId+'/questions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,content,qtype:currentQType})}).then(()=>refreshCourse());
+    }
+    async function submitAnswer(qid){
+        const input=document.getElementById('ansInput-'+qid);
+        if(!input||!input.value.trim()) return;
+        await fetch('/api/questions/'+qid+'/answer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:input.value.trim()})});
+        await refreshCourse();
+    }
+    async function deleteAnswer(aid,qid){
+        if(!confirm('确定删除此回答？')) return;
+        await fetch('/api/answers/'+aid,{method:'DELETE'});
+        await refreshCourse();
+    }
+    async function deleteQuestion(qid){
+        if(!confirm('确定删除此提问及其所有回答？')) return;
+        await fetch('/api/questions/'+qid,{method:'DELETE'});
+        await refreshCourse();
+    }
+    async function dimRate(cid,group,score){
+        if(!currentUser){window.location.href='/login';return;}
+        const map={1:'exam_difficulty',2:'workload',3:'practicality',4:'career_help'};
+        const key=map[group];
+        const data={};
+        data[key]=score;
+        const res=await fetch('/api/courses/'+cid+'/dim-rate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+        const d=await res.json();
+        const msg=document.getElementById('dimRateMsg');
+        if(d.success){msg.style.display='block';msg.style.color='var(--green)';msg.textContent='评分成功！';setTimeout(()=>msg.style.display='none',2000);await refreshCourse();}
+        else{msg.style.display='block';msg.style.color='#ef4444';msg.textContent=d.message||'失败';}
+    }
+    async function tagCourse(cid,tag){
+        if(!currentUser){window.location.href='/login';return;}
+        await fetch('/api/courses/'+cid+'/tags',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tag})});
+        await refreshCourse();
+    }
+
+    async function toggleReviewLike(id,btn){
+        if(!currentUser){window.location.href='/login';return;}
+        const r=await fetch('/api/review/'+id+'/like',{method:'POST'});
+        const d=await r.json();
+        if(d.success){
+            btn.innerHTML=d.liked?'&#9829;':'&#9825;';
+            btn.style.color=d.liked?'var(--pink)':'var(--text-muted)';
+            btn.querySelector('.like-count').textContent=d.count;
+        }
+    }
+
+    syncAuth().then(loadCourse);
+    </script>
+</body>
+</html>

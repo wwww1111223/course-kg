@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>个人主页 - NJU 课程星图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+/* ===== THEME SYSTEM - Light (Academic Cool Default) ===== */
+:root{
+  --bg:#f4f7fc;--bg-alt:#fafcfd;--card:rgba(255,255,255,.85);--card-border:rgba(0,0,0,.06);
+  --text:#1e293b;--sub:#475569;--muted:#94a3b8;
+  --blue:#3b82f6;--blue-lt:#e8f0fe;--violet:#8b5cf6;--violet-lt:#f0ecfc;
+  --amber:#f59e0b;--amber-lt:#fef3c7;--green:#10b981;--green-lt:#d1fae5;
+  --pink:#ec4899;--pink-lt:#fce7f3;--red:#ef4444;--red-lt:#fee2e2;
+  --gold:#b8860b;--gold-lt:#fef9e7;
+  --nav-bg:rgba(255,255,255,.78);--nav-border:rgba(0,0,0,.05);
+  --shadow:0 1px 3px rgba(0,0,0,.04);--shadow-md:0 4px 16px rgba(0,0,0,.05);--shadow-lg:0 12px 40px rgba(0,0,0,.06);
+  --radius:18px;--radius-sm:12px;--radius-pill:9999px;
+  --frost:rgba(255,255,255,.5);--frost-border:rgba(255,255,255,.3);
+  --font-sans:'Noto Sans SC',sans-serif;--font-display:'Space Grotesk','Noto Sans SC',sans-serif;
+}
+
+/* ===== THEME: Dark Gold (暗调鎏金) ===== */
+body.theme-dark-gold{
+  --bg:#0c0b10;--bg-alt:#121016;--card:rgba(22,20,30,.88);--card-border:rgba(212,168,75,.12);
+  --text:#e8e0d8;--sub:#a09888;--muted:#706858;
+  --blue:#d4a84b;--blue-lt:rgba(212,168,75,.12);--violet:#c084fc;--violet-lt:rgba(192,132,252,.1);
+  --amber:#f0c040;--amber-lt:rgba(240,192,64,.1);--green:#60c090;--green-lt:rgba(96,192,144,.1);
+  --pink:#f0a0b8;--pink-lt:rgba(240,160,184,.08);--red:#f06060;--red-lt:rgba(240,96,96,.1);
+  --gold:#e8c860;--gold-lt:rgba(232,200,96,.12);
+  --nav-bg:rgba(12,11,16,.85);--nav-border:rgba(212,168,75,.08);
+  --shadow:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 16px rgba(0,0,0,.4);--shadow-lg:0 12px 40px rgba(0,0,0,.5);
+  --frost:rgba(22,20,30,.6);--frost-border:rgba(212,168,75,.08);
+}
+body.theme-dark-gold .navbar .logo .dot{background:var(--gold)}
+body.theme-dark-gold .nav-links a:hover,.theme-dark-gold .nav-links a.active{color:var(--gold)!important;background:rgba(212,168,75,.1)!important}
+body.theme-dark-gold .academic-rank{border-color:rgba(212,168,75,.15)!important}
+body.theme-dark-gold .rank-badge{background:linear-gradient(135deg,#1a1420,#2a2030)!important;border-color:rgba(212,168,75,.2)!important;color:var(--gold)!important}
+body.theme-dark-gold .stat-card{border-color:rgba(212,168,75,.1)!important}
+body.theme-dark-gold .section-card{border-color:rgba(212,168,75,.08)!important;background:rgba(22,20,30,.75)!important}
+body.theme-dark-gold .frost-glass{background:rgba(22,20,30,.65)!important;border-color:rgba(212,168,75,.1)!important;backdrop-filter:blur(16px)!important}
+body.theme-dark-gold .badge-card.locked{opacity:.35}
+body.theme-dark-gold ::-webkit-scrollbar-thumb{background:rgba(212,168,75,.2)!important}
+body.theme-dark-gold .progress-bar-fill{background:linear-gradient(90deg,#d4a84b,#f0c040)!important}
+body.theme-dark-gold th{color:var(--gold)!important}
+body.theme-dark-gold table tr:hover td{background:rgba(212,168,75,.04)!important}
+body.theme-dark-gold .btn-outline{border-color:rgba(212,168,75,.2)!important;color:var(--gold)!important}
+body.theme-dark-gold .btn-outline:hover{background:rgba(212,168,75,.1)!important}
+
+/* ===== THEME: Ancient Paper (古籍纸) ===== */
+body.theme-ancient-paper{
+  --bg:#f2ebe0;--bg-alt:#f7f1e6;--card:rgba(250,244,234,.88);--card-border:rgba(139,105,20,.1);
+  --text:#3d3229;--sub:#6b5a4a;--muted:#9a8a7a;
+  --blue:#7a5c2e;--blue-lt:rgba(122,92,46,.08);--violet:#8b6914;--violet-lt:rgba(139,105,20,.08);
+  --amber:#b8860b;--amber-lt:rgba(184,134,11,.08);--green:#6b8e23;--green-lt:rgba(107,142,35,.08);
+  --pink:#a0522d;--pink-lt:rgba(160,82,45,.06);--red:#b22222;--red-lt:rgba(178,34,34,.06);
+  --gold:#8b6914;--gold-lt:rgba(139,105,20,.1);
+  --nav-bg:rgba(242,235,224,.85);--nav-border:rgba(139,105,20,.08);
+  --shadow:0 1px 3px rgba(139,105,20,.06);--shadow-md:0 4px 16px rgba(139,105,20,.08);--shadow-lg:0 12px 40px rgba(139,105,20,.1);
+  --frost:rgba(250,244,234,.5);--frost-border:rgba(139,105,20,.06);
+}
+body.theme-ancient-paper .navbar .logo .dot{background:#8b6914}
+body.theme-ancient-paper .nav-links a:hover,.theme-ancient-paper .nav-links a.active{color:#7a5c2e!important;background:rgba(122,92,46,.08)!important}
+body.theme-ancient-paper .academic-rank{border-color:rgba(139,105,20,.12)!important}
+body.theme-ancient-paper .rank-badge{background:linear-gradient(135deg,#f7f1e6,#ede4d4)!important;border-color:rgba(139,105,20,.15)!important;color:#8b6914!important}
+body.theme-ancient-paper .stat-card{border-color:rgba(139,105,20,.08)!important}
+body.theme-ancient-paper .section-card{border-color:rgba(139,105,20,.06)!important;background:rgba(250,244,234,.75)!important}
+body.theme-ancient-paper .frost-glass{background:rgba(250,244,234,.65)!important;border-color:rgba(139,105,20,.08)!important;backdrop-filter:blur(12px)!important}
+body.theme-ancient-paper .badge-card.locked{opacity:.4}
+body.theme-ancient-paper ::-webkit-scrollbar-thumb{background:rgba(139,105,20,.15)!important}
+body.theme-ancient-paper .progress-bar-fill{background:linear-gradient(90deg,#8b6914,#b8860b)!important}
+body.theme-ancient-paper th{color:#7a5c2e!important}
+body.theme-ancient-paper table tr:hover td{background:rgba(139,105,20,.03)!important}
+body.theme-ancient-paper .btn-outline{border-color:rgba(139,105,20,.15)!important;color:#7a5c2e!important}
+body.theme-ancient-paper .btn-outline:hover{background:rgba(139,105,20,.06)!important}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-sans);background:var(--bg);color:var(--text);
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(circle at 10% 20%,rgba(59,130,246,.02) 0%,transparent 50%);
+}
+body.theme-dark-gold{background-image:radial-gradient(circle at 10% 20%,rgba(212,168,75,.03) 0%,transparent 50%)}
+body.theme-ancient-paper{background-image:radial-gradient(circle at 10% 20%,rgba(139,105,20,.03) 0%,transparent 50%)}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:3px}
+
+/* ===== NAVBAR ===== */
+.navbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;height:64px;padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--nav-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--nav-border);
+}
+.navbar .logo{font-size:18px;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px;font-family:var(--font-display)}
+.navbar .logo .dot{width:10px;height:10px;border-radius:50%;background:var(--blue);display:inline-block}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{color:var(--sub);text-decoration:none;font-size:14px;font-weight:500;padding:6px 16px;border-radius:100px;transition:transform .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--blue);background:var(--blue-lt)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--card-border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--sub)}
+.theme-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-lt)}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--violet));display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;cursor:pointer;position:relative}
+.user-dropdown{display:none;position:absolute;top:48px;right:0;width:180px;background:var(--card);border:1px solid var(--card-border);border-radius:14px;box-shadow:var(--shadow-lg);padding:6px;z-index:200;backdrop-filter:blur(16px)}
+.user-dropdown.show{display:block}
+.user-dropdown a{display:block;padding:10px 14px;color:var(--text);text-decoration:none;font-size:13px;border-radius:10px}
+.user-dropdown a:hover{background:rgba(0,0,0,.03)}
+
+/* ===== LAYOUT ===== */
+.app-layout{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:90px 24px 50px;display:flex;gap:28px;min-height:100vh}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:270px;flex-shrink:0;position:sticky;top:90px;align-self:flex-start}
+.sidebar-inner{
+  background:var(--card);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:32px 24px 28px;
+  box-shadow:var(--shadow);backdrop-filter:blur(12px);
+  transition:transform .2s,opacity .2s;
+}
+.sidebar-inner:hover{box-shadow:var(--shadow-md)}
+.sidebar-avatar{width:80px;height:80px;margin:0 auto 16px;border-radius:24px;position:relative;overflow:hidden}
+.sidebar-avatar .av-bg{width:100%;height:100%;background:linear-gradient(135deg,var(--blue),var(--violet));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:32px;color:#fff;font-weight:700}
+.sidebar-avatar .online-dot{position:absolute;bottom:3px;right:3px;width:14px;height:14px;background:var(--green);border:2px solid var(--card);border-radius:50%}
+.sidebar-name{text-align:center;font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text)}
+.sidebar-account{text-align:center;font-size:12px;color:var(--muted);margin-top:2px}
+.academic-rank{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;padding:8px 14px;border:1px solid var(--card-border);border-radius:var(--radius-pill);font-size:12px;font-weight:600;color:var(--sub)}
+.academic-rank .rank-icon{font-size:16px}
+.rank-badge{display:inline-block;background:linear-gradient(135deg,var(--blue-lt),var(--violet-lt));border:1px solid var(--card-border);border-radius:var(--radius-pill);padding:2px 10px;font-size:11px;font-weight:600;color:var(--blue)}
+.sidebar-stats{display:flex;gap:12px;margin-top:18px;padding:16px 0;border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border)}
+.sidebar-stats .si{flex:1;text-align:center}
+.sidebar-stats .si-n{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text)}
+.sidebar-stats .si-l{font-size:10px;color:var(--muted);margin-top:1px}
+.sidebar-menu{margin-top:18px;display:flex;flex-direction:column;gap:2px}
+.sidebar-menu .mi{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);color:var(--sub);font-size:13px;font-weight:500;cursor:pointer;transition:transform .2s;border:none;background:transparent;width:100%;text-align:left;font-family:inherit}
+.sidebar-menu .mi:hover{color:var(--text);background:rgba(0,0,0,.02)}
+.sidebar-menu .mi.active{color:var(--blue);background:var(--blue-lt)}
+.sidebar-menu .mi .mi-icon{font-size:16px;width:20px;text-align:center}
+
+/* ===== MAIN ===== */
+.main-content{flex:1;min-width:0}
+
+.page-head{margin-bottom:24px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.page-head h2{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text);letter-spacing:-.5px}
+.page-head .sub{font-size:14px;color:var(--muted);margin-top:4px}
+.page-head .right{display:flex;gap:8px;align-items:center}
+
+/* ===== STATS ROW ===== */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+@media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.stats-row{grid-template-columns:1fr}}
+.stat-card{
+  background:var(--card);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:22px 20px;
+  box-shadow:var(--shadow);backdrop-filter:blur(12px);
+  transition:transform .2s,opacity .2s;position:relative;overflow:hidden;
+}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card:nth-child(1)::before{background:var(--blue)}
+.stat-card:nth-child(2)::before{background:var(--violet)}
+.stat-card:nth-child(3)::before{background:var(--amber)}
+.stat-card:nth-child(4)::before{background:var(--green)}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.stat-card .sc-icon{font-size:20px;margin-bottom:8px;display:block}
+.stat-card .sc-val{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text);line-height:1.2;letter-spacing:-.5px}
+.stat-card .sc-lbl{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ===== SECTION CARD ===== */
+.section-card{
+  background:var(--card);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:28px;margin-bottom:20px;
+  box-shadow:var(--shadow);backdrop-filter:blur(12px);
+  transition:transform .2s,opacity .2s;
+}
+.section-card:hover{box-shadow:var(--shadow-md)}
+.section-card.sh-glow:hover{border-color:var(--gold-lt)}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.sh-title{font-family:var(--font-display);font-size:17px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:10px}
+.sh-badge{font-size:11px;font-weight:500;color:var(--muted);background:rgba(0,0,0,.02);padding:3px 12px;border-radius:var(--radius-pill);border:1px solid var(--card-border)}
+
+/* ===== TABLE ===== */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-sm)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);border-bottom:2px solid var(--card-border);position:sticky;top:0;background:var(--card);z-index:1}
+td{padding:10px 14px;border-bottom:1px solid var(--card-border);color:var(--sub)}
+tr:hover td{background:rgba(0,0,0,.015)}
+.course-link{color:var(--blue);font-weight:500;cursor:pointer;text-decoration:none}
+.course-link:hover{text-decoration:underline}
+.star-rating{color:var(--amber);font-weight:600;font-family:var(--font-display)}
+
+/* ===== REVIEW WATERFALL ===== */
+.review-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.review-card{
+  background:var(--bg-alt);border:1px solid var(--card-border);
+  border-radius:var(--radius-sm);padding:20px;
+  transition:transform .2s;break-inside:avoid;
+}
+.review-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.review-card .rc-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.review-card .rc-course{font-size:14px;font-weight:600;color:var(--blue);cursor:pointer}
+.review-card .rc-course:hover{text-decoration:underline}
+.review-card .rc-score{color:var(--amber);font-weight:700;font-size:13px;font-family:var(--font-display)}
+.review-card .rc-body{color:var(--sub);font-size:14px;line-height:1.8;margin:8px 0 12px}
+.review-card .rc-f{display:flex;align-items:center;justify-content:space-between}
+.review-card .rc-time{color:var(--muted);font-size:11px}
+.review-card .rc-actions{display:flex;gap:4px}
+.review-card .rc-actions button{padding:4px 12px;font-size:11px;font-weight:500;border-radius:var(--radius-pill);cursor:pointer;border:1px solid var(--card-border);background:transparent;color:var(--sub);transition:transform .2s;font-family:inherit}
+.review-card .rc-actions .btn-edit:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-lt)}
+.review-card .rc-actions .btn-del:hover{border-color:var(--red);color:var(--red);background:var(--red-lt)}
+
+/* ===== ANNOTATION LIST ===== */
+.ann-list{display:flex;flex-direction:column}
+.ann-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--card-border)}
+.ann-item:last-child{border-bottom:none}
+.ann-item:hover{background:rgba(0,0,0,.01)}
+.ann-bullet{width:8px;height:8px;background:var(--violet);border-radius:50%;margin-top:8px;flex-shrink:0}
+.ann-body{flex:1;min-width:0}
+.ann-kp{font-weight:600;color:var(--text);font-size:15px;display:flex;align-items:center;gap:8px}
+.ann-tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:var(--radius-pill);background:var(--violet-lt);color:var(--violet);border:1px solid var(--card-border)}
+.ann-text{color:var(--sub);font-size:14px;line-height:1.7;margin-top:4px}
+.ann-time{color:var(--muted);font-size:11px;margin-top:6px}
+
+/* ===== ACHIEVEMENTS ===== */
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:14px}
+.badge-card{
+  text-align:center;padding:20px 12px 16px;
+  background:var(--bg-alt);border:1px solid var(--card-border);
+  border-radius:var(--radius-sm);transition:transform .2s,opacity .2s;
+}
+.badge-card:not(.locked):hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--amber)}
+.badge-card.locked{opacity:.4;filter:grayscale(.6)}
+.badge-card .bc-icon{font-size:32px;margin-bottom:8px;display:block}
+.badge-card.locked .bc-icon{filter:grayscale(1)}
+.badge-card .bc-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.badge-card .bc-desc{font-size:10px;color:var(--muted);margin-top:4px}
+.badge-card.locked .bc-lock{display:inline-block;font-size:14px;margin-bottom:4px}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.4);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:transform .2s,opacity .2s}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal-box{background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);padding:32px;width:480px;max-width:90vw;box-shadow:var(--shadow-lg);transform:scale(.95);transition:transform .3s}
+.modal-overlay.open .modal-box{transform:scale(1)}
+.modal-box h3{font-family:var(--font-display);font-size:20px;font-weight:600;color:var(--text);margin-bottom:20px}
+.modal-box label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;font-weight:500}
+.modal-box input,.modal-box textarea,.modal-box select{width:100%;padding:10px 14px;background:var(--bg-alt);border:1px solid var(--card-border);border-radius:var(--radius-sm);color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border-color .2s;margin-bottom:16px}
+.modal-box input:focus,.modal-box textarea:focus,.modal-box select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.modal-box textarea{resize:vertical;min-height:80px}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:8px}
+.modal-actions button{padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;border:none;border-radius:var(--radius-pill);transition:transform .2s;font-family:inherit}
+.modal-actions .btn-cancel{background:var(--bg-alt);border:1px solid var(--card-border);color:var(--sub)}
+.modal-actions .btn-cancel:hover{background:var(--card-border)}
+.modal-actions .btn-save{background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.25)}
+.modal-actions .btn-save:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(59,130,246,.4)}
+
+/* ===== FROSTED GLASS ===== */
+.frost-glass{background:var(--frost);border:1px solid var(--frost-border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+/* ===== EMPTY & LOADING ===== */
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
+.loading-wrap{display:flex;align-items:center;justify-content:center;gap:12px;padding:50px 0}
+.spinner{width:22px;height:22px;border:2px solid var(--card-border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-wrap span{font-size:14px;color:var(--muted)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .app-layout{flex-direction:column}
+  .sidebar{width:100%;position:static}
+  .sidebar-inner{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;padding:24px}
+  .sidebar-avatar{margin:0}
+  .sidebar-menu{display:none}
+}
+@media(max-width:600px){
+  .sidebar-inner{grid-template-columns:1fr;text-align:center}
+  .sidebar-avatar{margin:0 auto}
+  .navbar{padding:0 16px}
+  .nav-links a{padding:6px 10px;font-size:12px}
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp .5s ease both}
+.anim-d1{animation-delay:.1s}.anim-d2{animation-delay:.2s}.anim-d3{animation-delay:.3s}.anim-d4{animation-delay:.4s}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<div id="navbar"></div>
+<script src="/js/navbar.js"></script>
+
+<!-- ===== LAYOUT ===== -->
+<div class="app-layout">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-inner">
+      <div class="sidebar-avatar" id="avatarWrap" style="cursor:pointer;position:relative;" onclick="document.getElementById('avatarInput').click()">
+        <div class="av-bg" id="avatarText">&#x1F464;</div>
+        <span class="online-dot"></span>
+        <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);font-size:10px;background:rgba(0,0,0,.5);color:#fff;padding:2px 8px;border-radius:4px;white-space:nowrap;">上传头像</div>
+        <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+      </div>
+      <div>
+        <div class="sidebar-name" id="displayName">加载中...</div>
+        <div class="sidebar-account" id="userAccount">@--</div>
+        <div class="academic-rank" id="rankDisplay">
+          <span class="rank-icon">&#x1F393;</span>
+          <span id="rankLabel">学徒</span>
+          <span class="rank-badge" id="rankBadge">Lv.0</span>
+        </div>
+        <div class="sidebar-stats">
+          <div class="si"><div class="si-n" id="sReviews">--</div><div class="si-l">点评</div></div>
+          <div class="si"><div class="si-n" id="sAnnotations">--</div><div class="si-l">标注</div></div>
+          <div class="si"><div class="si-n" id="sCredits">--</div><div class="si-l">学分</div></div>
+        </div>
+        <div class="sidebar-menu">
+          <button class="mi active" data-tab="ratings"><span class="mi-icon">&#9733;</span> 我的评分</button>
+          <button class="mi" data-tab="reviews"><span class="mi-icon">&#9998;</span> 我的点评</button>
+          <button class="mi" data-tab="annotations"><span class="mi-icon">&#9776;</span> 我的标注</button>
+          <button class="mi" data-tab="achievements"><span class="mi-icon">&#127894;</span> 我的成就</button>
+          <a href="/leaderboard" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border-radius:12px;color:var(--sub);font-size:14px;font-weight:500;text-decoration:none;margin-top:4px;" onmouseover="this.style.background='#f8fafc';this.style.color='var(--text)'" onmouseout="this.style.background='transparent';this.style.color='var(--sub)'"><span style="font-size:18px;width:22px;text-align:center;">&#127942;</span> 用户排行榜</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main-content">
+
+    <div class="page-head">
+      <div>
+        <h2>个人主页</h2>
+        <div class="sub">管理评分、点评、知识点标注与成就</div>
+      </div>
+      <div class="right">
+        <span style="font-size:12px;color:var(--muted)" id="lastSync"></span>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row anim">
+      <div class="stat-card anim-d1"><span class="sc-icon">&#9733;</span><div class="sc-val" id="totalRatings">--</div><div class="sc-lbl">累计评分</div></div>
+      <div class="stat-card anim-d2"><span class="sc-icon">&#9998;</span><div class="sc-val" id="totalReviews">--</div><div class="sc-lbl">点评数</div></div>
+      <div class="stat-card anim-d3"><span class="sc-icon">&#9776;</span><div class="sc-val" id="totalAnnotations">--</div><div class="sc-lbl">标注数</div></div>
+      <div class="stat-card anim-d4"><span class="sc-icon">&#x1F393;</span><div class="sc-val" id="totalCredits">--</div><div class="sc-lbl">已修学分</div></div>
+    </div>
+
+    <!-- My Ratings -->
+    <div class="section-card anim" id="sectionRatings">
+      <div class="sh"><div class="sh-title">&#9733; 我的评分</div><span class="sh-badge" id="ratingsBadge">0 条</span></div>
+      <div id="ratingsContent"><div class="loading-wrap"><div class="spinner"></div><span>加载中...</span></div></div>
+    </div>
+
+    <!-- My Reviews -->
+    <div class="section-card anim" id="sectionReviews">
+      <div class="sh"><div class="sh-title">&#9998; 我的点评</div><span class="sh-badge" id="reviewsBadge">0 条</span></div>
+      <div class="review-grid" id="reviewsContent"><div class="loading-wrap"><div class="spinner"></div><span>加载中...</span></div></div>
+    </div>
+
+    <!-- My Annotations -->
+    <div class="section-card anim" id="sectionAnnotations">
+      <div class="sh"><div class="sh-title">&#9776; 我的标注</div><span class="sh-badge" id="annotationsBadge">0 条</span></div>
+      <div class="ann-list" id="annotationsContent"><div class="loading-wrap"><div class="spinner"></div><span>加载中...</span></div></div>
+    </div>
+
+    <!-- My Achievements -->
+    <div class="section-card anim" id="sectionAchievements">
+      <div class="sh"><div class="sh-title">&#127894; 我的成就</div><span class="sh-badge" id="achBadge">0 / 0</span></div>
+      <div class="ach-grid" id="achContent"><div class="loading-wrap"><div class="spinner"></div><span>加载中...</span></div></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ===== EDIT REVIEW MODAL ===== -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <h3>编辑点评</h3>
+    <label>评分</label>
+    <select id="editScore">
+      <option value="5">5 星</option><option value="4">4 星</option><option value="3">3 星</option><option value="2">2 星</option><option value="1">1 星</option>
+    </select>
+    <label>点评内容</label>
+    <textarea id="editContent" placeholder="写下你的点评..." rows="4"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEditModal()">取消</button>
+      <button class="btn-save" id="saveEditBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== THEME SYSTEM =====
+const THEMES = ['academic-cool', 'theme-dark-gold', 'theme-ancient-paper'];
+const THEME_LABELS = { 'academic-cool': '学术冷调', 'theme-dark-gold': '暗调鎏金', 'theme-ancient-paper': '古籍纸' };
+const THEME_ICONS = { 'academic-cool': '&#x1F30A;', 'theme-dark-gold': '&#x2728;', 'theme-ancient-paper': '&#x1F4DC;' };
+let currentTheme = (function(){
+  var t = localStorage.getItem('theme');
+  if (t === 'dark') return 'theme-dark-gold';
+  if (t === 'light') return 'academic-cool';
+  return localStorage.getItem('profileTheme') || 'academic-cool';
+})();
+
+function applyTheme(theme) {
+  // 只移除主题类，保留 body.dark（由 navbar.js 管理）
+  THEMES.forEach(function(t){ document.body.classList.remove(t); });
+  if (theme !== 'academic-cool') document.body.classList.add(theme);
+  currentTheme = theme;
+  localStorage.setItem('profileTheme', theme);
+  localStorage.setItem('theme', (theme === 'theme-dark-gold') ? 'dark' : 'light');
+  // 同步 navbar 的 body.dark 状态
+  if (theme === 'theme-dark-gold') document.body.classList.add('dark');
+  else document.body.classList.remove('dark');
+  var btn = document.getElementById('themeBtn');
+  if (btn) {
+    btn.innerHTML = THEME_ICONS[theme] || '&#x1F319;';
+    btn.title = THEME_LABELS[theme] || theme;
+  }
+}
+
+function cycleTheme() {
+  var idx = THEMES.indexOf(currentTheme);
+  applyTheme(THEMES[(idx + 1) % THEMES.length]);
+}
+
+// 响应共享导航栏的主题切换
+window.onThemeChange = function(dark) {
+  applyTheme(dark ? 'theme-dark-gold' : 'academic-cool');
+};
+
+// Init theme
+try { applyTheme(currentTheme); } catch(e) {}
+
+// ===== GLOBALS =====
+let profileData = null;
+let editingReviewId = null;
+let achievementsData = [];
+
+// ===== ACADEMIC RANK =====
+function calcRank(credits) {
+  if (credits == null || credits < 0) return { label: '学徒', icon: '&#x1F393;', level: 0 };
+  if (credits >= 30) return { label: '博士', icon: '&#x1F451;', level: 4 };
+  if (credits >= 20) return { label: '硕士', icon: '&#x1F470;', level: 3 };
+  if (credits >= 10) return { label: '学士', icon: '&#x1F4DC;', level: 2 };
+  return { label: '学徒', icon: '&#x1F393;', level: 1 };
+}
+
+// ===== ACHIEVEMENT DEFINITIONS =====
+const ACHIEVEMENT_DEFS = [
+  { id: 'first_rating', name: '初次评分', icon: '&#9733;', desc: '给第一门课程打分', check: p => (p.ratings||[]).length >= 1 },
+  { id: 'rating_master', name: '评分大师', icon: '&#x1F3C6;', desc: '给超过5门课程打分', check: p => (p.ratings||[]).length >= 5 },
+  { id: 'first_review', name: '初露锋芒', icon: '&#9998;', desc: '发表第一条点评', check: p => (p.reviews||[]).length >= 1 },
+  { id: 'review_expert', name: '点评达人', icon: '&#x1F4DD;', desc: '发表超过10条点评', check: p => (p.reviews||[]).length >= 10 },
+  { id: 'first_annotation', name: '学无止境', icon: '&#x1F4D6;', desc: '添加第一条标注', check: p => (p.annotations||[]).length >= 1 },
+  { id: 'annotation_collector', name: '标注达人', icon: '&#x1F4DA;', desc: '添加超过10条标注', check: p => (p.annotations||[]).length >= 10 },
+  { id: 'scholar_10', name: '学分筑基', icon: '&#x1F4BA;', desc: '累计获得10学分', check: p => (p.earned_credits||0) >= 10 },
+  { id: 'scholar_20', name: '学分小成', icon: '&#x1F4BC;', desc: '累计获得20学分', check: p => (p.earned_credits||0) >= 20 },
+  { id: 'scholar_30', name: '学分大成', icon: '&#x1F3DB;', desc: '累计获得30学分', check: p => (p.earned_credits||0) >= 30 },
+  { id: 'scholar_40', name: '满级毕业', icon: '&#x1F3C1;', desc: '累计获得40学分', check: p => (p.earned_credits||0) >= 40 },
+  { id: 'five_star', name: '五星好评', icon: '&#x2B50;', desc: '给某门课程打满分', check: p => (p.ratings||[]).some(r => r.score >= 5) },
+  { id: 'dimension_explorer', name: '维度探索', icon: '&#x1F30D;', desc: '涉猎所有四个维度', check: p => {
+    if(!p.ratings||!p.ratings.length)return false;
+    const dims = new Set();let count=0;
+    p.ratings.forEach(r=>{if(r.dimension){dims.add(r.dimension);count++}});
+    return false; // Simplified — achieved through backend
+  }},
+  { id: 'social', name: '社交达人', icon: '&#x1F91D;', desc: '收到5个点赞', check: () => false },
+  { id: 'persistent', name: '持之以恒', icon: '&#x1F4AA;', desc: '连续登录7天', check: () => false },
+];
+
+// ===== LOAD PROFILE =====
+async function loadProfile() {
+  try {
+    const authRes = await fetch('/api/auth/status');
+    const auth = await authRes.json();
+    if (!auth.authenticated) {
+      window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+      return;
+    }
+    const u = auth.user;
+    document.getElementById('ua').textContent = (u.display_name || u.username)[0] || '?';
+    document.getElementById('displayName').textContent = u.display_name || u.nickname || u.username || '用户';
+    document.getElementById('userAccount').textContent = '@' + (u.username || '--');
+    // 显示已保存的头像
+    if (u.avatar) {
+      var avatarEl = document.getElementById('avatarText');
+      if (avatarEl) avatarEl.innerHTML = '<img src="'+u.avatar+'" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">';
+    }
+
+    const [profileRes, achRes] = await Promise.all([
+      fetch('/api/user/profile'),
+      fetch('/api/user/achievements')
+    ]);
+    const profile = await profileRes.json();
+    if (!profile.success || !profile.profile) throw new Error('获取用户信息失败');
+
+    const p = profile.profile;
+    // Merge credits from profile if available, else use rating count as proxy
+    if (p.earned_credits == null) {
+      p.earned_credits = (p.ratings || []).length * 2; // fallback
+    }
+    profileData = p;
+
+    // Achievements
+    const achData = await achRes.json();
+    if (achData.success && achData.achievements) {
+      achievementsData = achData.achievements;
+    }
+
+    renderProfile(p);
+  } catch(e) {
+    const errMsg = '<div class="empty-state"><div>加载失败</div><div style="font-size:12px;">' + (e.message||'请稍后重试') + '</div></div>';
+    ['ratingsContent','reviewsContent','annotationsContent','achContent'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = errMsg;
+    });
+  }
+}
+
+// ===== RENDER PROFILE =====
+function renderProfile(p) {
+  const rc = (p.ratings && p.ratings.length) || 0;
+  const rvc = (p.reviews && p.reviews.length) || 0;
+  const ac = (p.annotations && p.annotations.length) || 0;
+  const cred = p.earned_credits || 0;
+
+  // Sidebar stats
+  document.getElementById('sReviews').textContent = rvc;
+  document.getElementById('sAnnotations').textContent = ac;
+  document.getElementById('sCredits').textContent = cred;
+
+  // Rank
+  const rank = calcRank(cred);
+  document.getElementById('rankLabel').innerHTML = rank.icon + ' ' + rank.label;
+  document.getElementById('rankBadge').textContent = 'Lv.' + rank.level;
+
+  // Stat cards
+  document.getElementById('totalRatings').textContent = rc;
+  document.getElementById('totalReviews').textContent = rvc;
+  document.getElementById('totalAnnotations').textContent = ac;
+  document.getElementById('totalCredits').textContent = cred;
+
+  // Badges
+  document.getElementById('ratingsBadge').textContent = rc + ' 条';
+  document.getElementById('reviewsBadge').textContent = rvc + ' 条';
+  document.getElementById('annotationsBadge').textContent = ac + ' 条';
+
+  // Last sync
+  document.getElementById('lastSync').textContent = '同步于 ' + new Date().toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+
+  renderRatings(p.ratings || []);
+  renderReviews(p.reviews || []);
+  renderAnnotations(p.annotations || []);
+  renderAchievements(p);
+}
+
+// ===== RENDER RATINGS =====
+function renderRatings(ratings) {
+  const c = document.getElementById('ratingsContent');
+  if (!ratings.length) {
+    c.innerHTML = '<div class="empty-state"><div>暂无评分</div><div style="font-size:12px;">去课程页面为课程评分吧</div></div>';
+    return;
+  }
+  c.innerHTML = `<div class="table-wrap"><table><tr><th>课程</th><th style="width:90px;">评分</th></tr>
+    ${ratings.map(r => `<tr><td><span class="course-link" onclick="window.location='/course/${r.course_id}'">${r.course_name || '未知课程'}</span></td>
+    <td><span class="star-rating">&#9733; ${r.score}</span></td></tr>`).join('')}
+  </table></div>`;
+}
+
+// ===== RENDER REVIEWS =====
+function renderReviews(reviews) {
+  const c = document.getElementById('reviewsContent');
+  if (!reviews.length) {
+    c.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div>暂无点评</div><div style="font-size:12px;">去课程页面发表你的点评吧</div></div>';
+    return;
+  }
+  c.innerHTML = reviews.map(r => `
+    <div class="review-card anim">
+      <div class="rc-h">
+        <span class="rc-course" onclick="window.location='/course/${r.course_id}'">${r.course_name || '课程'}</span>
+        <span class="rc-score">&#9733; ${r.score || '-'}</span>
+      </div>
+      <div class="rc-body">${r.content || '（无内容）'}</div>
+      <div class="rc-f">
+        <span class="rc-time">${formatTime(r.created_at)}</span>
+        <div class="rc-actions">
+          <button class="btn-edit" onclick="openEditReview('${r.id}','${r.score||'5'}','${(r.content||'').replace(/'/g,"\\'")}')">编辑</button>
+          <button class="btn-del" onclick="deleteReview('${r.id}')">删除</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ===== RENDER ANNOTATIONS =====
+function renderAnnotations(annotations) {
+  const c = document.getElementById('annotationsContent');
+  if (!annotations.length) {
+    c.innerHTML = '<div class="empty-state"><div>暂无标注</div><div style="font-size:12px;">在课程页面为知识点添加标注吧</div></div>';
+    return;
+  }
+  c.innerHTML = annotations.map(a => `
+    <div class="ann-item">
+      <div class="ann-bullet"></div>
+      <div class="ann-body">
+        <div class="ann-kp">${a.kp_name || '知识点'}${a.dimension ? '<span class="ann-tag">'+a.dimension+'</span>' : ''}</div>
+        <div class="ann-text">${a.content || '（无内容）'}</div>
+        <div class="ann-time">${formatTime(a.created_at)}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ===== RENDER ACHIEVEMENTS =====
+function renderAchievements(p) {
+  const c = document.getElementById('achContent');
+  // Merge server achievements with local definitions
+  const serverAchMap = {};
+  if (achievementsData && achievementsData.length) {
+    achievementsData.forEach(a => { serverAchMap[a.id] = a; });
+  }
+
+  let unlockedCount = 0;
+  const cards = ACHIEVEMENT_DEFS.map(def => {
+    // Check server first, then local fallback
+    const serverAch = serverAchMap[def.id];
+    const unlocked = serverAch ? serverAch.unlocked : def.check(p);
+    if (unlocked) unlockedCount++;
+    const lockIcon = unlocked ? '' : '<div class="bc-lock">&#x1F512;</div>';
+    const cls = unlocked ? '' : 'locked';
+    return `<div class="badge-card ${cls}">
+      ${lockIcon}<span class="bc-icon">${def.icon}</span>
+      <div class="bc-name">${def.name}</div>
+      <div class="bc-desc">${def.desc}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('achBadge').textContent = unlockedCount + ' / ' + ACHIEVEMENT_DEFS.length;
+  c.innerHTML = cards;
+}
+
+// ===== REVIEW EDIT/DELETE =====
+function openEditReview(id, score, content) {
+  editingReviewId = id;
+  document.getElementById('editScore').value = score || '5';
+  document.getElementById('editContent').value = content || '';
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEditModal() { editingReviewId = null; document.getElementById('editModal').classList.remove('open'); }
+
+document.getElementById('saveEditBtn').addEventListener('click', async function() {
+  if (!editingReviewId) return;
+  const score = document.getElementById('editScore').value;
+  const content = document.getElementById('editContent').value.trim();
+  try {
+    const res = await fetch('/api/review/' + editingReviewId, {
+      method: 'PUT', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({score: parseInt(score), content: content || ''})
+    });
+    const d = await res.json();
+    if (d.success) { closeEditModal(); loadProfile(); }
+    else { alert(d.message || '保存失败'); }
+  } catch(e) { alert('网络错误，请稍后重试'); }
+});
+
+document.getElementById('editModal').addEventListener('click', function(e) { if (e.target === this) closeEditModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeEditModal(); });
+
+async function deleteReview(id) {
+  if (!confirm('确定要删除这条点评吗？')) return;
+  try {
+    const res = await fetch('/api/review/' + id, {method: 'DELETE'});
+    const d = await res.json();
+    if (d.success) loadProfile();
+    else alert(d.message || '删除失败');
+  } catch(e) { alert('网络错误，请稍后重试'); }
+}
+
+// ===== SIDEBAR TAB NAV =====
+document.querySelectorAll('.sidebar-menu .mi').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.sidebar-menu .mi').forEach(el => el.classList.remove('active'));
+    this.classList.add('active');
+    const tab = this.dataset.tab;
+    const map = {ratings:'sectionRatings', reviews:'sectionReviews', annotations:'sectionAnnotations', achievements:'sectionAchievements'};
+    const el = document.getElementById(map[tab]);
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+// ===== USER MENU =====
+function toggleUserMenu() { document.getElementById('ud').classList.toggle('show'); }
+async function logout() { await fetch('/api/auth/logout', {method:'POST'}); window.location.reload(); }
+
+// ===== 头像上传 =====
+function uploadAvatar(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64 = e.target.result;
+    const res = await fetch('/api/user/avatar', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({avatar:base64})});
+    const d = await res.json();
+    if (d.success) {
+      const img = document.getElementById('avatarText');
+      if (img) img.innerHTML = '<img src="'+base64+'" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">';
+      alert('头像更新成功！');
+    } else { alert(d.message||'上传失败'); }
+  };
+  reader.readAsDataURL(file);
+}
+document.addEventListener('click', function(e) {
+  const ud = document.getElementById('ud');
+  const ua = document.getElementById('ua');
+  if (ud.classList.contains('show') && !ua.contains(e.target)) ud.classList.remove('show');
+});
+
+// ===== TIME FORMAT =====
+function formatTime(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    const y = d.getFullYear();
+    const mo = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const h = String(d.getHours()).padStart(2,'0');
+    const mi = String(d.getMinutes()).padStart(2,'0');
+    return y + '-' + mo + '-' + dd + ' ' + h + ':' + mi;
+  } catch(e) { return dateStr; }
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', loadProfile);
+</script>
+</body>
+</html>

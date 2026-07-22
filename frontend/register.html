@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>注册 - 知识图谱社区</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --bg: #fafcfd;
+    --card: #ffffff;
+    --text: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --blue: #3b82f6;
+    --violet: #8b5cf6;
+    --green: #10b981;
+    --green-soft: #ecfdf5;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+    --radius: 20px;
+    --radius-sm: 12px;
+    --radius-pill: 9999px;
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-sans: 'Noto Sans SC', sans-serif;
+    --font-display: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+}
+
+body.dark {--bg:#0f1116;--card:#1a1d26;--text:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;--border:#2d3340;--green-soft:#162a22;--shadow-lg:0 12px 40px rgba(0,0,0,0.5)}
+body.dark input{background:#1a1d26!important;border-color:var(--border)!important;color:var(--text)!important}
+body.dark input::placeholder{color:var(--text-muted)!important}
+body.dark .msg-box.error{background:#2a1215!important;border-color:#4a2025!important}
+body.dark .msg-box.success{background:#162a22!important;border-color:#1a4a32!important}
+body.dark .glass-card{background:var(--card)!important;border-color:var(--border)!important}
+html, body { height: 100%; overflow: hidden; }
+body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    background-image:
+        radial-gradient(ellipse at 15% 15%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 40%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    -webkit-font-smoothing: antialiased;
+}
+
+@keyframes floatBubble {
+    0%,100% { transform: translateY(0) scale(1); opacity: 0.5; }
+    50% { transform: translateY(-14px) scale(1.04); opacity: 0.8; }
+}
+
+/* Floating orbs */
+.bubbles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.bubble {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.06), rgba(59, 130, 246, 0.03));
+    animation: floatBubble 9s ease-in-out infinite;
+}
+.bubble:nth-child(1) { width: 180px; height: 180px; top: 8%; left: 6%; animation-delay: 0s; }
+.bubble:nth-child(2) { width: 140px; height: 140px; top: 18%; right: 10%; animation-delay: -3s; background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.02)); }
+.bubble:nth-child(3) { width: 110px; height: 110px; bottom: 22%; left: 12%; animation-delay: -6s; }
+.bubble:nth-child(4) { width: 150px; height: 150px; bottom: 10%; right: 6%; animation-delay: -9s; background: radial-gradient(circle at 30% 30%, rgba(139, 92, 246, 0.04), rgba(16, 185, 129, 0.02)); }
+
+/* Main card */
+.glass-card {
+    position: relative; z-index: 2;
+    width: 460px; max-width: 92vw;
+    padding: 48px 44px 40px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.card-header { text-align: center; margin-bottom: 32px; }
+.card-header .logo-icon {
+    font-size: 32px; margin-bottom: 8px; display: inline-block;
+    color: var(--green);
+}
+.card-header h2 {
+    font-family: var(--font-display); font-size: 24px; font-weight: 700;
+    margin-bottom: 4px; color: var(--text); letter-spacing: -0.5px;
+}
+.card-header .subtitle {
+    font-size: 13px; color: var(--text-muted);
+}
+
+/* Form */
+.form-group { margin-bottom: 18px; }
+.form-group label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;
+    font-weight: 500;
+}
+.form-group input {
+    width: 100%; padding: 13px 16px;
+    background: #f8fafc; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text);
+    font-size: 14px; outline: none; font-family: var(--font-sans);
+    transition: all var(--transition);
+}
+.form-group input::placeholder { color: var(--text-muted); }
+.form-group input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+.form-group input.error {
+    border-color: #fca5a5;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.06);
+}
+
+.msg-box {
+    display: none; padding: 10px 14px; margin-bottom: 16px;
+    font-size: 13px; line-height: 1.5; border-radius: 8px;
+}
+.msg-box.show { display: block; }
+.msg-box.error {
+    background: #fef2f2; border: 1px solid #fecaca;
+    color: #dc2626;
+    animation: msgIn 0.3s ease forwards;
+}
+.msg-box.success {
+    background: var(--green-soft); border: 1px solid #a7f3d0;
+    color: #059669;
+    animation: msgIn 0.3s ease forwards;
+}
+@keyframes msgIn {
+    0% { opacity: 0; transform: translateY(-6px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes shake {
+    0%,100% { transform: translateX(0); }
+    15% { transform: translateX(-6px); }
+    30% { transform: translateX(6px); }
+    45% { transform: translateX(-4px); }
+    60% { transform: translateX(4px); }
+    75% { transform: translateX(-2px); }
+    90% { transform: translateX(2px); }
+}
+.shake { animation: shake 0.5s ease; }
+
+/* Submit button - green accent */
+.btn-submit {
+    position: relative; overflow: hidden;
+    width: 100%; padding: 14px; border: none;
+    border-radius: var(--radius-pill);
+    color: #fff; font-family: var(--font-sans); font-size: 15px;
+    font-weight: 600; cursor: pointer; letter-spacing: 0.3px;
+    background: linear-gradient(135deg, var(--green), #059669);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+    transition: all var(--transition);
+}
+.btn-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+}
+.btn-submit::before {
+    content: ''; position: absolute; top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s;
+}
+.btn-submit:hover::before { left: 150%; }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.link-row {
+    display: flex; justify-content: center; gap: 4px;
+    margin-top: 22px; font-size: 14px; color: var(--text-muted);
+}
+.link-row a {
+    color: var(--green); text-decoration: none; font-weight: 600;
+    transition: color var(--transition);
+}
+.link-row a:hover { color: #059669; }
+
+@media (max-width:520px) { .glass-card { padding: 36px 24px 32px; } }
+</style>
+</head>
+<body>
+
+<div id="navbar"></div>
+
+<div class="bubbles">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+</div>
+
+<div class="glass-card">
+    <div class="card-header">
+        <div class="logo-icon">&#9671;</div>
+        <h2>创建账号</h2>
+        <p class="subtitle">加入社区，开启知识图谱之旅</p>
+    </div>
+
+    <form id="regForm" autocomplete="off">
+        <div class="msg-box error" id="errorMsg"></div>
+        <div class="msg-box success" id="successMsg"></div>
+
+        <div class="form-group">
+            <label>用户名</label>
+            <input type="text" id="username" placeholder="3-50个字符，字母或数字" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label>显示名称</label>
+            <input type="text" id="displayName" placeholder="如：张同学（可选）" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label>密码</label>
+            <input type="password" id="password" placeholder="至少6个字符" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+            <label>确认密码</label>
+            <input type="password" id="confirmPassword" placeholder="再次输入密码" autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn-submit" id="regBtn">注 册</button>
+        <div class="link-row">已有账号？<a href="/login">立即登录</a></div>
+    </form>
+</div>
+
+<script src="/js/navbar.js"></script>
+<script>
+// ALL ORIGINAL JS PRESERVED EXACTLY
+const form=document.getElementById('regForm');
+const username=document.getElementById('username');
+const displayName=document.getElementById('displayName');
+const password=document.getElementById('password');
+const confirmPassword=document.getElementById('confirmPassword');
+const errorMsg=document.getElementById('errorMsg');
+const successMsg=document.getElementById('successMsg');
+const regBtn=document.getElementById('regBtn');
+
+function hideAllMessages() { errorMsg.classList.remove('show'); errorMsg.textContent=''; successMsg.classList.remove('show'); successMsg.textContent=''; }
+function showError(msg) { errorMsg.textContent=msg; errorMsg.classList.add('show'); }
+function showSuccess(msg) { successMsg.textContent=msg; successMsg.classList.add('show'); }
+function shakeForm() { form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake'); }
+function markError(input) { input.classList.add('error'); input.addEventListener('animationend', ()=>input.classList.remove('error'), {once:true}); }
+
+form.addEventListener('submit', async(e)=>{
+    e.preventDefault();
+    hideAllMessages(); form.classList.remove('shake');
+    const uname=username.value.trim();
+    const dname=displayName.value.trim();
+    const pwd=password.value;
+    const cpwd=confirmPassword.value;
+
+    let hasError=false;
+    if (!uname||uname.length<3||uname.length>50) { showError('用户名须为3-50个字符'); markError(username); hasError=true; }
+    if (!pwd||pwd.length<6) { showError('密码至少6个字符'); markError(password); hasError=true; }
+    if (pwd!==cpwd) { showError('两次密码输入不一致'); markError(confirmPassword); hasError=true; }
+    if (hasError) { shakeForm(); return; }
+
+    regBtn.disabled=true; regBtn.textContent='注册中...';
+    try {
+        const res=await fetch('/api/auth/register',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({username:uname,password:pwd,display_name:dname||undefined}),
+        });
+        const data=await res.json();
+        if (data.success) { showSuccess('注册成功！即将跳转登录页...'); setTimeout(()=>{window.location.href='/login';},1500); }
+        else { showError(data.message||'注册失败，请稍后重试'); shakeForm(); }
+    } catch(err) { showError('网络错误，请稍后重试'); shakeForm(); }
+    finally { regBtn.disabled=false; regBtn.textContent='注 册'; }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NJU 课程星图</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fafcfd;--card:#fff;--text:#1e293b;--sub:#64748b;--muted:#94a3b8;
+  --blue:#3b82f6;--blue-lt:#eff6ff;--pink:#ec4899;--pink-lt:#fdf2f8;
+  --amber:#f59e0b;--amber-lt:#fffbeb;--green:#10b981;--green-lt:#ecfdf5;
+  --violet:#8b5cf6;--violet-lt:#f5f3ff;
+  --radius:18px;--shadow:0 1px 3px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.05);--shadow-lg:0 12px 40px rgba(0,0,0,.06);
+}
+body.dark{--bg:#0f1116;--card:#1a1d26;--text:#e2e8f0;--sub:#94a3b8;--muted:#64748b;--shadow:0 1px 3px rgba(0,0,0,.2);--shadow-md:0 4px 16px rgba(0,0,0,.3);--shadow-lg:0 12px 40px rgba(0,0,0,.4)}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans SC','Space Grotesk',sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+body.dark .navbar{background:rgba(15,17,22,.9);border-color:rgba(255,255,255,.05)}
+body.dark .nav-links a:hover,body.dark .nav-links a.active{background:rgba(59,130,246,.12)}
+body.dark .user-dropdown{background:var(--card);border-color:rgba(255,255,255,.08)}
+body.dark .hero-badge{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.08)}
+body.dark .qa{background:var(--card);border-color:rgba(255,255,255,.06);color:var(--sub)}
+body.dark .qa:hover{color:var(--blue);border-color:var(--blue)}
+body.dark .dmc.active{background:rgba(59,130,246,.1)}
+body.dark .cc{background:var(--card);border-color:rgba(255,255,255,.06)}
+body.dark .cc .cc-f{border-color:rgba(255,255,255,.04)}
+body.dark .footer{border-color:rgba(255,255,255,.04)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.08);border-radius:3px}
+
+/* Navbar */
+.navbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;height:64px;padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,.82);backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(0,0,0,.05);
+}
+.navbar .logo{font-size:20px;font-weight:700;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:8px}
+.navbar .logo .dot{width:10px;height:10px;border-radius:50%;background:var(--blue);display:inline-block}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links a{color:var(--sub);text-decoration:none;font-size:14px;font-weight:500;padding:6px 16px;border-radius:100px;transition:transform .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--blue);background:var(--blue-lt)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid rgba(0,0,0,.08);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:transform .2s;color:var(--sub)}
+.theme-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-lt)}
+body.dark .theme-btn{border-color:rgba(255,255,255,.1)}
+.nav-search{position:relative;width:200px}
+.nav-search input{width:100%;padding:8px 14px 8px 36px;background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06);border-radius:100px;color:var(--text);font-size:13px;outline:none;font-family:inherit;transition:transform .2s}
+.nav-search input:focus{border-color:var(--blue);background:var(--blue-lt)}
+.nav-search .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--violet));display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.user-dropdown{display:none;position:absolute;top:48px;right:0;width:180px;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;box-shadow:var(--shadow-lg);padding:6px;z-index:200}
+.user-dropdown.show{display:block}
+.user-dropdown a{display:block;padding:10px 14px;color:var(--text);text-decoration:none;font-size:13px;border-radius:10px}
+.user-dropdown a:hover{background:rgba(0,0,0,.03)}
+
+.container{max-width:1280px;margin:0 auto;padding:80px 24px 40px}
+
+/* ===== HERO - Creative Magazine Style ===== */
+.hero{position:relative;padding:24px 0 48px;margin-bottom:8px}
+.hero::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.06),transparent)}
+.hero-grid{display:grid;grid-template-columns:1.4fr 0.6fr;gap:32px;align-items:start}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:20px}}
+.hero-main{position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px 4px 12px;background:var(--card);border:1px solid rgba(0,0,0,.06);border-radius:100px;font-size:12px;color:var(--blue);font-weight:500;margin-bottom:20px;box-shadow:var(--shadow)}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.hero-main h1{font-family:'Space Grotesk',sans-serif;font-size:56px;font-weight:700;line-height:1.05;letter-spacing:-2px;margin-bottom:18px}
+.hero-main h1 .grad{background:linear-gradient(135deg,var(--blue),var(--violet),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-main h1 .highlight{position:relative;display:inline-block}
+.hero-main h1 .highlight::after{content:'';position:absolute;bottom:2px;left:0;right:0;height:8px;background:linear-gradient(90deg,var(--amber-lt),transparent);border-radius:4px;z-index:-1}
+.hero-main .sub{font-size:17px;color:var(--sub);line-height:1.8;margin-bottom:24px;max-width:480px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{padding:12px 28px;border-radius:100px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:transform .2s;text-decoration:none;display:inline-block}
+.btn-primary{background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff;box-shadow:0 4px 16px rgba(59,130,246,.25)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(59,130,246,.35)}
+.btn-outline{background:transparent;border:2px solid rgba(0,0,0,.08);color:var(--text)}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.btn-sm{padding:8px 18px;font-size:13px}
+.tagline{display:flex;align-items:center;gap:8px;margin-top:28px;font-size:13px;color:var(--muted)}
+.tagline .td{width:6px;height:6px;border-radius:50%;display:inline-block}
+.tagline .td:nth-child(1){background:var(--blue)}
+.tagline .td:nth-child(2){background:var(--violet)}
+.tagline .td:nth-child(3){background:var(--pink)}
+.tagline .td:nth-child(4){background:var(--amber)}
+
+/* Hero Side - Right feature cards arranged artistically */
+.hero-side{position:relative}
+.hero-side .hsc{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.04);transition:transform .2s,transform .2s;position:relative}
+.hero-side .hsc:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.hero-side .hsc-1{margin-bottom:12px;display:flex;align-items:center;gap:16px}
+.hero-side .hsc-1 .hsc-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.hero-side .hsc-1 .hsc-icon.b{background:var(--blue-lt)}
+.hero-side .hsc-1 .hsc-icon.v{background:var(--violet-lt)}
+.hero-side .hsc-1 .hsc-icon.g{background:var(--amber-lt)}
+.hero-side .hsc-1 .hsc-icon.p{background:var(--pink-lt)}
+.hero-side .hsc-1 .hsc-n{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700}
+.hero-side .hsc-1 .hsc-d{font-size:12px;color:var(--muted)}
+.hero-side .hsc-mini{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.hero-side .hsc-item{padding:14px 12px;background:var(--card);border:1px solid rgba(0,0,0,.04);border-radius:12px;box-shadow:var(--shadow);text-align:center;transition:transform .2s,transform .2s}
+.hero-side .hsc-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.hero-side .hsc-item .hsc-n{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700}
+.hero-side .hsc-item .hsc-d{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* Quick Actions Bar */
+.quick-bar{display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap}
+.qa{display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:100px;background:var(--card);border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow);font-size:14px;font-weight:500;color:var(--text);cursor:pointer;text-decoration:none;transition:transform .2s;font-family:inherit}
+.qa:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);color:var(--blue)}
+.qa .qic{font-size:16px}
+
+/* Section */
+.section{margin-bottom:40px}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.sh h2{font-size:22px;font-weight:700;font-family:'Space Grotesk',sans-serif}
+.sh .right{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Cat tabs */
+.ctabs{display:flex;gap:6px;flex-wrap:wrap}
+.ctab{padding:6px 18px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid rgba(0,0,0,.06);background:transparent;color:var(--sub);transition:transform .2s;font-family:inherit}
+.ctab:hover{background:rgba(0,0,0,.02)}
+.ctab.active{background:var(--text);color:#fff;border-color:var(--text)}
+
+/* Course Grid */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.cc{
+  background:var(--card);border-radius:var(--radius);padding:24px;
+  box-shadow:var(--shadow);transition:transform .2s,transform .2s;cursor:pointer;
+  position:relative;overflow:hidden
+}
+.cc:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.cc .cc-bar{position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px;transition:width .3s}
+.cc:nth-child(6n+1) .cc-bar{background:var(--blue)}
+.cc:nth-child(6n+2) .cc-bar{background:var(--violet)}
+.cc:nth-child(6n+3) .cc-bar{background:var(--green)}
+.cc:nth-child(6n+4) .cc-bar{background:var(--pink)}
+.cc:nth-child(6n+5) .cc-bar{background:var(--amber)}
+.cc:nth-child(6n+6) .cc-bar{background:var(--blue)}
+.cc:hover .cc-bar{width:6px}
+.cc .cc-n{font-size:17px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:10px}
+.cc .cc-m{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.cct{padding:2px 10px;border-radius:100px;font-size:11px;font-weight:500;background:rgba(0,0,0,.03);color:var(--sub)}
+.cct.clc{background:var(--blue-lt);color:var(--blue)}
+.cct.cred{background:var(--amber-lt);color:var(--amber)}
+.cct.cat{background:var(--violet-lt);color:var(--violet)}
+.cc .cc-d{font-size:13px;color:var(--sub);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cc .cc-f{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid rgba(0,0,0,.04)}
+.cc .cc-r{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--amber)}
+.cc .cc-k{font-size:12px;color:var(--muted)}
+
+/* Dim Grid */
+.dimg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:768px){.dimg{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.dimg{grid-template-columns:1fr}}
+.dmc{background:var(--card);border:1px solid rgba(0,0,0,.05);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s,transform .2s;display:flex;align-items:center;gap:14px}
+.dmc:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.dmc .di{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.dmc .dn{font-size:15px;font-weight:600;margin-bottom:2px}
+.dmc .dc{font-size:12px;color:var(--muted)}
+.dmc.active{border-color:var(--blue);background:var(--blue-lt)}
+.dmc.culture .di{background:var(--amber-lt)}
+.dmc.institution .di{background:var(--violet-lt)}
+.dmc.personal .di{background:var(--blue-lt)}
+.dmc.computation .di{background:var(--green-lt)}
+
+/* Footer */
+.footer{border-top:1px solid rgba(0,0,0,.04);padding:28px 0 20px;margin-top:40px;text-align:center;color:var(--muted);font-size:13px}
+.footer a{color:var(--blue);text-decoration:none}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUpS{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp .5s ease both}
+.anim-s{animation:fadeUpS .4s ease both}
+
+/* Tagline under title */
+</style>
+</head>
+<body>
+
+<div id="navbar"></div>
+
+<div class="container">
+
+  <!-- HERO: Creative Magazine Style -->
+  <div class="hero">
+    <div class="hero-grid">
+      <div class="hero-main">
+        <div class="hero-badge">信息管理与信息系统 · 2025级</div>
+        <h1>探索课程的<br><span class="grad">隐藏联结</span></h1>
+        <p class="sub">将29门课程与174个知识点织成知识图谱网络，跨越文化、机构、个人、计算四大维度，用全新的视角发现课程之间的深层关联。</p>
+        <div class="hero-actions">
+          <a href="#courses" class="btn btn-primary">开始探索</a>
+          <a href="/visualization" class="btn btn-outline">进入知识星图</a>
+        </div>
+        <div class="tagline"><span class="td"></span><span class="td"></span><span class="td"></span><span class="td"></span> 南京大学信息管理学院</div>
+      </div>
+      <div class="hero-side">
+        <div class="hsc hsc-1">
+          <div class="hsc-icon b">&#x1F4DA;</div>
+          <div><div class="hsc-n" id="cs">29</div><div class="hsc-d">门核心课程</div></div>
+        </div>
+        <div class="hsc-mini">
+          <div class="hsc-item"><div class="hsc-n" id="ks" style="color:var(--violet)">174</div><div class="hsc-d">知识点</div></div>
+          <div class="hsc-item"><div class="hsc-n" id="ls" style="color:var(--amber)">510</div><div class="hsc-d">关联关系</div></div>
+          <div class="hsc-item"><div class="hsc-n" style="color:var(--green)">3</div><div class="hsc-d">虚拟用户</div></div>
+          <div class="hsc-item"><div class="hsc-n" style="color:var(--pink)">4</div><div class="hsc-d">分类维度</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-bar">
+    <button class="qa" onclick="sd()"><span class="qic">&#x1F3AF;</span> 按维度</button>
+    <button class="qa" onclick="window.location='/visualization'"><span class="qic">&#x1F310;</span> 知识星图</button>
+    <button class="qa" onclick="window.location='/analysis'"><span class="qic">&#x1F4CA;</span> 数据洞察</button>
+    <button class="qa" onclick="rc()"><span class="qic">&#x1F3B2;</span> 随机探索</button>
+    <button class="qa" onclick="window.location='/login'"><span class="qic">&#x1F464;</span> 登录</button>
+    <button class="qa" onclick="tt()"><span class="qic">&#x1F319;</span> 暗色</button>
+  </div>
+
+  <!-- Dims -->
+  <div class="section" id="ds">
+    <div class="sh"><h2>四大分类维度</h2><span style="color:var(--muted);font-size:14px">点击筛选课程</span></div>
+    <div class="dimg" id="dg"></div>
+  </div>
+
+  <!-- Courses -->
+  <div class="section" id="courses">
+    <div class="sh">
+      <h2>全部课程</h2>
+      <div class="ctabs" id="ct"></div>
+    </div>
+    <div class="cgrid" id="cg"></div>
+  </div>
+
+  <div class="footer">
+    NJU 课程星图 · 南京大学信息管理学院<br>
+    <span style="font-size:11px">基于知识图谱的课程组织与可视化平台 · 信息组织大作业</span>
+  </div>
+</div>
+
+<script src="/js/navbar.js"></script>
+<script>
+let ac=[],ad=[],acat='all';
+
+async function load(){
+  try{
+    const data=await fetch('/api/courses').then(r=>r.json());
+    if(data.success){ac=data.courses;gct();rd();rcr(ac);up()}
+  }catch(e){document.getElementById('cg').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">加载失败，请检查后端服务</div>'}
+}
+
+function gct(){
+  const cats=new Set(ac.map(c=>c.category));
+  document.getElementById('ct').innerHTML='<button class="ctab active" onclick="sc(\'all\')">全部</button>'+[...cats].map(c=>`<button class="ctab" onclick="sc('${c}')">${c}</button>`).join('');
+}
+function sc(c){acat=c;document.querySelectorAll('.ctab').forEach(b=>b.classList.toggle('active',b.textContent===c||(c==='all'&&b.textContent==='全部')));f()}
+
+const dimMap={culture:'文化',institution:'机构',personal:'个人',computation:'计算'};
+function rd(){
+  const d={culture:{n:'文化维度',i:'&#x1F9E0;',c:'culture',cnt:0},institution:{n:'机构维度',i:'&#x1F3DB;',c:'institution',cnt:0},personal:{n:'个人维度',i:'&#x1F4A1;',c:'personal',cnt:0},computation:{n:'计算维度',i:'&#x1F4BB;',c:'computation',cnt:0}};
+  ac.forEach(c=>{(c.dimensions||[]).forEach(dim=>{const k=Object.keys(dimMap).find(k=>dimMap[k]===dim);if(k)d[k].cnt++})});
+  document.getElementById('dg').innerHTML=Object.entries(d).map(([k,v])=>`<div class="dmc ${v.c} ${ad.includes(k)?'active':''}" onclick="td('${k}')"><div class="di">${v.i}</div><div><div class="dn">${v.n}</div><div class="dc">${v.cnt} 门课程</div></div></div>`).join('');
+}
+function td(dim){const i=ad.indexOf(dim);i>=0?ad.splice(i,1):ad.push(dim);rd();f()}
+
+function rcr(cs){
+  const g=document.getElementById('cg');
+  if(!cs.length){g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)"><div style="font-size:48px;margin-bottom:12px;opacity:.3">&#x1F4ED;</div>没有匹配的课程<br><span style="font-size:13px">试试调整筛选条件</span></div>';return}
+  g.innerHTML=cs.map(c=>{
+    const d=(c.dimensions||[]).slice(0,3).map(dd=>`<span class="cct cat">${dd}</span>`).join('');
+    return `<div class="cc anim" onclick="window.location='/course/${c.id}'"><div class="cc-bar"></div><div class="cc-n">${c.name}</div><div class="cc-m"><span class="cct clc">${c.clc_number||''}</span><span class="cct cred">${c.credit}学分</span><span class="cct cat">${c.category}</span>${d}</div><div class="cc-d">${c.description||'暂无简介'}</div><div class="cc-f"><span class="cc-r">${c.avg_score?'&#x2605; '+c.avg_score:'暂无评分'}</span><span class="cc-k">${c.rating_count||0}人评价</span></div></div>`;
+  }).join('');
+}
+
+function f(){
+  let fl=ac.slice();
+  if(acat!=='all')fl=fl.filter(c=>c.category===acat);
+  if(ad.length>0)fl=fl.filter(c=>(c.dimensions||[]).some(d=>ad.some(a=>dimMap[a]===d)));
+  const q=document.getElementById('gs').value.trim().toLowerCase();
+  if(q)fl=fl.filter(c=>c.name.toLowerCase().includes(q)||(c.description||'').toLowerCase().includes(q));
+  rcr(fl);
+}
+function up(){document.getElementById('cs').textContent=ac.length;document.getElementById('ks').textContent=174}
+function sd(){document.getElementById('ds').scrollIntoView({behavior:'smooth'})}
+function rc(){if(ac.length){const c=ac[Math.floor(Math.random()*ac.length)];window.location='/course/'+c.id}}
+function tum(){document.getElementById('ud').classList.toggle('show')}
+// 将 filter 函数暴露给导航栏搜索框
+window.filterCourses=f;
+load();
+</script>
+</body>
+</html>

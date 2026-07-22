@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>社区 - NJU课程星图</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f4f7fc;--card:#fff;--text:#1e293b;--sub:#475569;--muted:#94a3b8;--blue:#3b82f6;--violet:#8b5cf6;--green:#10b981;--amber:#f59e0b;--pink:#ec4899;--border:#e2e8f0;--radius:14px;--font-sans:'Noto Sans SC',sans-serif;--font-display:'Space Grotesk','Noto Sans SC',sans-serif}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;padding:0 24px;display:flex;align-items:center;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.logo a{font-family:var(--font-display);font-size:17px;font-weight:600;text-decoration:none;color:var(--text);display:flex;align-items:center;gap:8px}
+.logo-dot{width:26px;height:26px;background:linear-gradient(135deg,var(--blue),var(--violet));border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px}
+.nav-links{margin-left:auto;display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--sub);text-decoration:none;font-size:13px;padding:5px 12px;border-radius:999px;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--blue);background:rgba(59,130,246,.06)}
+.container{max-width:960px;margin:0 auto;padding:80px 16px 30px}
+h1{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:4px}
+.sub{color:var(--sub);font-size:13px;margin-bottom:20px}
+
+/* Feed */
+.feed{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.feed-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;gap:12px;align-items:flex-start;transition:all .2s}
+.feed-item:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.feed-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--violet));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;flex-shrink:0;overflow:hidden}
+.feed-avatar img{width:100%;height:100%;object-fit:cover}
+.feed-body{flex:1;min-width:0}
+.feed-user{font-size:13px;font-weight:600;color:var(--text)}
+.feed-user span{color:var(--muted);font-weight:400;font-size:12px}
+.feed-action{font-size:12px;color:var(--sub);margin:4px 0;line-height:1.5}
+.feed-action .highlight{color:var(--blue);font-weight:600}
+.feed-time{font-size:11px;color:var(--muted)}
+.feed-like{background:none;border:1px solid var(--border);border-radius:999px;padding:3px 12px;font-size:12px;cursor:pointer;color:var(--muted);transition:all .2s;white-space:nowrap;flex-shrink:0}
+.feed-like:hover{border-color:var(--pink);color:var(--pink)}
+.feed-like.liked{background:rgba(236,72,153,.08);border-color:var(--pink);color:var(--pink)}
+
+/* User cards */
+.user-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:8px}
+.user-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;align-items:center;gap:14px;transition:all .2s}
+.user-card:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.uc-avatar{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--violet));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px;flex-shrink:0;overflow:hidden}
+.uc-avatar img{width:100%;height:100%;object-fit:cover}
+.uc-info{flex:1;min-width:0}
+.uc-name{font-size:14px;font-weight:600}
+.uc-title{font-size:11px;color:var(--muted);margin-top:1px}
+.uc-stats{display:flex;gap:10px;margin-top:6px;font-size:11px;color:var(--sub)}
+.uc-stats span{display:flex;align-items:center;gap:3px}
+.uc-score{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--blue);flex-shrink:0}
+.uc-like-btn{background:none;border:1px solid var(--border);border-radius:999px;padding:5px 14px;font-size:12px;cursor:pointer;color:var(--muted);transition:all .2s;flex-shrink:0}
+.uc-like-btn:hover{border-color:var(--pink);color:var(--pink);background:rgba(236,72,153,.05)}
+.uc-like-btn.liked{background:rgba(236,72,153,.1);border-color:var(--pink);color:var(--pink)}
+
+/* Message board */
+.msg-area{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px}
+.msg-area h3{font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.msg-input-row{display:flex;gap:10px;margin-bottom:12px}
+.msg-input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:13px;outline:none;background:#f8fafc;font-family:var(--font-sans)}
+.msg-input:focus{border-color:var(--blue)}
+.msg-send{padding:10px 22px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.msg-send:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.msg-item{padding:10px 0;border-bottom:1px solid #f1f5f9;display:flex;gap:10px;align-items:flex-start}
+.msg-item:last-child{border-bottom:none}
+.msg-avatar{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--violet));display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0}
+.msg-body{flex:1}
+.msg-user{font-size:12px;font-weight:600}
+.msg-text{font-size:13px;color:var(--sub);margin:2px 0 4px;line-height:1.5}
+.msg-time{font-size:10px;color:var(--muted)}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{padding:7px 20px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;font-size:13px;transition:all .2s;font-family:var(--font-sans)}
+.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.loading{text-align:center;padding:40px;color:var(--muted)}
+</style>
+</head>
+<body>
+<nav class="navbar">
+<div class="logo"><a href="/"><span class="logo-dot">&#9671;</span>NJU课程星图</a></div>
+<div class="nav-links">
+<a href="/">首页</a><a href="/visualization">知识星图</a><a href="/analysis">数据洞察</a>
+<a href="/planner">学分计算</a><a href="/quiz">答题闯关</a><a href="/library">藏书阁</a>
+<a href="/leaderboard" class="active">社区</a><a href="/profile">个人中心</a>
+</div>
+</nav>
+<div class="container">
+<h1>&#x1F91D; 学习社区</h1>
+<div class="sub">看看同学们在学什么，互相点赞鼓励</div>
+
+<div class="tabs">
+<button class="tab active" onclick="switchTab('feed',this)">&#x1F4AA; 动态</button>
+<button class="tab" onclick="switchTab('users',this)">&#x1F3C6; 同学榜</button>
+<button class="tab" onclick="switchTab('messages',this)">&#x1F4AC; 留言板</button>
+</div>
+
+<!-- 动态 -->
+<div id="tabFeed">
+<div class="feed" id="feedList"><div class="loading">加载中...</div></div>
+</div>
+
+<!-- 同学榜 -->
+<div id="tabUsers" style="display:none">
+<div class="user-grid" id="userGrid"><div class="loading">加载中...</div></div>
+</div>
+
+<!-- 留言板 -->
+<div id="tabMessages" style="display:none">
+<div class="msg-area">
+<h3>&#x1F4AC; 留下你想说的话</h3>
+<div class="msg-input-row">
+<input class="msg-input" id="msgInput" placeholder="写一句想对同学们说的话..." maxlength="200">
+<button class="msg-send" onclick="sendMessage()">发布</button>
+</div>
+<div id="msgList"><div class="loading">加载中...</div></div>
+</div>
+</div>
+</div>
+
+<script>
+let currentUser = null;
+let userLikes = JSON.parse(localStorage.getItem('userLikes')||'{}');
+
+async function init(){
+  try {
+    const a = await fetch('/api/auth/status'); const ad = await a.json();
+    if (ad.authenticated) currentUser = ad.user;
+  } catch(e) {}
+  loadFeed();
+  loadUsers();
+  loadMessages();
+}
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tabFeed').style.display = name==='feed'?'block':'none';
+  document.getElementById('tabUsers').style.display = name==='users'?'block':'none';
+  document.getElementById('tabMessages').style.display = name==='messages'?'block':'none';
+}
+
+// === 动态 ===
+async function loadFeed(){
+  try {
+    const r = await fetch('/api/community/feed'); const d = await r.json();
+    if (!d.success||!d.feed) throw Error();
+    renderFeed(d.feed);
+  } catch(e) {
+    document.getElementById('feedList').innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">暂无动态</div>';
+  }
+}
+function renderFeed(items){
+  const el = document.getElementById('feedList');
+  if (!items.length) { el.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted)">还没有动态，快去点评课程吧</div>'; return; }
+  el.innerHTML = items.map(item => {
+    const icon = item.type==='review'?'&#x270E;':'&#x1F4DD;';
+    const content = item.type==='review'
+      ? '点评了 <span class="highlight">'+item.course+'</span>：'+item.content
+      : '标注了知识点 <span class="highlight">'+item.kp+'</span>：'+item.content;
+    const initial = (item.user||'?')[0];
+    return '<div class="feed-item"><div class="feed-avatar">'+initial+'</div><div class="feed-body">'+
+      '<div class="feed-user">'+(item.user||'匿名')+' <span>'+icon+'</span></div>'+
+      '<div class="feed-action">'+content+'</div>'+
+      '<div class="feed-time">'+item.time+'</div></div></div>';
+  }).join('');
+}
+
+// === 同学榜 ===
+async function loadUsers(){
+  try {
+    const r = await fetch('/api/leaderboard'); const d = await r.json();
+    if (!d.success) throw Error();
+    renderUsers(d.leaderboard);
+  } catch(e) {
+    document.getElementById('userGrid').innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">加载失败</div>';
+  }
+}
+function renderUsers(data){
+  const el = document.getElementById('userGrid');
+  el.innerHTML = data.map(u => {
+    const isSelf = currentUser && currentUser.id === u.id;
+    const liked = userLikes[u.id];
+    const initial = (u.display_name||u.username||'?')[0];
+    const medal = u.score >= 100 ? '&#x1F31F;' : u.score >= 50 ? '&#x2728;' : '&#x1F4A1;';
+    return '<div class="user-card"><div class="uc-avatar">'+initial+'</div><div class="uc-info">'+
+      '<div class="uc-name">'+(u.display_name||u.username)+(isSelf?' <span style="font-size:10px;color:var(--blue)">(你)</span>':'')+'</div>'+
+      '<div class="uc-title">'+medal+' '+u.title+'</div>'+
+      '<div class="uc-stats"><span>&#x2B50; '+u.ratings+'</span><span>&#x270E; '+u.reviews+'</span><span>&#x1F4DD; '+u.annotations+'</span></div></div>'+
+      '<div class="uc-score">'+u.score+'</div>'+
+      (isSelf?'':'<button class="uc-like-btn '+(liked?'liked':'')+'" onclick="likeUser('+u.id+',this)">'+(liked?'&#x2764; 已赞':'&#x2661; 点赞')+'</button>')+'</div>';
+  }).join('');
+}
+async function likeUser(id,btn){
+  if (!currentUser) { alert('请先登录'); return; }
+  const liked = userLikes[id] ? false : true;
+  userLikes[id] = liked;
+  localStorage.setItem('userLikes', JSON.stringify(userLikes));
+  btn.classList.toggle('liked');
+  btn.innerHTML = liked ? '&#x2764; 已赞' : '&#x2661; 点赞';
+}
+
+// === 留言板（服务端同步） ===
+let messages = [];
+async function loadMessages(){
+  try {
+    const r = await fetch('/api/messages'); const d = await r.json();
+    if (d.success) messages = d.messages||[];
+  } catch(e) { messages=[]; }
+  renderMessages();
+}
+function renderMessages(){
+  const el = document.getElementById('msgList');
+  if (!messages.length){ el.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">还没有留言，说点什么吧</div>'; return; }
+  el.innerHTML = messages.map(m => {
+    const isOwn = currentUser && (m.username === currentUser.display_name || m.username === currentUser.username || (currentUser.id && m.user_id === currentUser.id));
+    return '<div class="msg-item"><div class="msg-avatar">'+(m.username[0]||'?')+'</div><div class="msg-body">'+
+      '<div class="msg-user">'+m.username+'</div><div class="msg-text">'+m.content+'</div>'+
+      '<div style="display:flex;gap:8px;align-items:center;margin-top:4px;">'+
+      '<span class="msg-time">'+m.created_at+'</span>'+
+      '<button style="background:none;border:none;font-size:11px;cursor:pointer;color:var(--muted);padding:0;" onclick="likeMessage('+m.id+',this)">&#x2661; <span>'+(m.likes||0)+'</span></button>'+
+      (isOwn?'<button style="background:none;border:none;font-size:11px;cursor:pointer;color:var(--blue);padding:0;" onclick="editMessage('+m.id+',\''+m.content.replace(/'/g,"\\'")+'\')">编辑</button>':'')+
+      (isOwn?'<button style="background:none;border:none;font-size:11px;cursor:pointer;color:#ef4444;padding:0;" onclick="deleteMessage('+m.id+')">删除</button>':'')+
+      '</div></div></div>';
+  }).join('');
+}
+async function sendMessage(){
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text) return;
+  try {
+    const r = await fetch('/api/messages', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({content:text})});
+    const d = await r.json();
+    if (d.success) { input.value=''; loadMessages(); }
+  } catch(e) { alert('发送失败'); }
+}
+async function editMessage(id, oldContent){
+  const newText = prompt('编辑留言：', oldContent);
+  if (!newText || !newText.trim()) return;
+  try {
+    const r = await fetch('/api/messages/'+id, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({content:newText.trim()})});
+    const d = await r.json();
+    if (d.success) loadMessages(); else alert(d.message||'编辑失败');
+  } catch(e) { alert('网络错误'); }
+}
+async function deleteMessage(id){
+  if (!confirm('确定删除此留言？')) return;
+  try {
+    const r = await fetch('/api/messages/'+id, {method:'DELETE'});
+    const d = await r.json();
+    if (d.success) loadMessages(); else alert(d.message||'删除失败');
+  } catch(e) { alert('网络错误'); }
+}
+async function likeMessage(id,btn){
+  try {
+    const r = await fetch('/api/messages/'+id+'/like', {method:'POST'});
+    const d = await r.json();
+    if (d.success) { btn.innerHTML='&#x2764; <span>'+d.likes+'</span>'; loadMessages(); }
+  } catch(e) {}
+}
+
+init();
+</script>
+</body></html>

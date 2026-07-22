@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>学分计算器 - NJU课程星图</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f4f7fc;--card:#fff;--stripe-bg:#f8fafc;--text:#1e293b;--sub:#475569;--muted:#94a3b8;--blue:#3b82f6;--violet:#8b5cf6;--green:#10b981;--amber:#f59e0b;--border:#e2e8f0;--radius:14px;--font-sans:'Noto Sans SC',sans-serif;--font-display:'Space Grotesk','Noto Sans SC',sans-serif}
+body.dark{--bg:#0f1116;--card:#1a1d26;--stripe-bg:#1e2030;--text:#e2e8f0;--sub:#94a3b8;--muted:#64748b;--border:#2d3340}
+body.dark .navbar{background:rgba(15,17,22,.9);border-color:rgba(255,255,255,.05)}
+body.dark .nav-links a:hover,body.dark .nav-links a.active{color:var(--blue);background:rgba(59,130,246,.1)}
+body.dark input{background:#1a1d26;border-color:var(--border);color:var(--text)}
+body.dark .course-item{background:#1a1d26}
+body.dark .course-item:hover{border-color:var(--blue)}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;padding:0 24px;display:flex;align-items:center;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.logo a{font-family:var(--font-display);font-size:17px;font-weight:600;text-decoration:none;color:var(--text);display:flex;align-items:center;gap:8px}
+.logo-dot{width:26px;height:26px;background:linear-gradient(135deg,var(--blue),var(--violet));border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px}
+.nav-links{margin-left:auto;display:flex;align-items:center;gap:4px}
+.nav-links a{color:var(--sub);text-decoration:none;font-size:13px;padding:5px 12px;border-radius:999px;transition:transform .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--blue);background:rgba(59,130,246,.06)}
+.container{max-width:960px;margin:0 auto;padding:80px 16px 30px}
+h1{font-family:var(--font-display);font-size:26px;font-weight:700;margin-bottom:2px}
+.sub{color:var(--sub);font-size:13px;margin-bottom:16px}
+.layout{display:grid;grid-template-columns:1fr 280px;gap:20px}
+@media(max-width:700px){.layout{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+.filter-bar{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.filter-btn{padding:4px 14px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;font-size:12px;transition:transform .2s}
+.filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.search-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;outline:none;margin-bottom:10px;background:var(--stripe-bg, #1a1d26);font-family:var(--font-sans)}
+.search-input:focus{border-color:var(--blue)}
+.course-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);margin-bottom:5px;cursor:pointer;transition:all .15s;background:#fafcfd}
+.course-item:hover{border-color:var(--blue)}
+.course-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--blue);cursor:pointer}
+.ci-name{font-size:13px;font-weight:500;flex:1}
+.ci-credit{font-size:12px;color:var(--muted);font-weight:600}
+.ci-cat{font-size:10px;padding:2px 8px;border-radius:999px;background:rgba(59,130,246,.08);color:var(--blue)}
+.stats-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:sticky;top:80px}
+.stats-panel h3{font-size:15px;font-weight:600;margin-bottom:14px;color:var(--blue)}
+.stat-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:13px}
+.stat-row:last-child{border-bottom:none}
+.stat-row .label{color:var(--sub)}
+.stat-row .value{font-weight:700;font-family:var(--font-display);color:var(--text)}
+.stat-row .total{color:var(--blue);font-size:20px}
+.section-title{font-family:var(--font-display);font-size:17px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.plan-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:transform .2s}
+.plan-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.04);border-color:var(--blue)}
+.pc-name{font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.pc-sem{font-size:11px;color:var(--muted);margin-bottom:8px}
+.pc-stats{display:flex;gap:14px;font-size:12px;color:var(--sub)}
+.pc-stats span{font-weight:600;color:var(--text);font-family:var(--font-display)}
+.btn{padding:7px 18px;border-radius:999px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-sans);transition:transform .2s}
+.btn-primary{background:linear-gradient(135deg,var(--blue),#2563eb);color:#fff}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--sub)}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:14px}
+.empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+.new-plan-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<div id="navbar"></div>
+<script src="/js/navbar.js"></script>
+
+<div class="container">
+<h1>&#x1F4CA; 学分计算器</h1>
+<div class="sub">勾选已修课程统计学分 · 登录后可保存学期计划</div>
+
+<div class="layout">
+<div>
+<div class="card">
+<div class="filter-bar" id="filterBar">
+<button class="filter-btn active" onclick="setFilter('all',this)">全部</button>
+<button class="filter-btn" onclick="setFilter('通修课',this)">通修课</button>
+<button class="filter-btn" onclick="setFilter('学科课',this)">学科课</button>
+<button class="filter-btn" onclick="setFilter('专业核心课',this)">专业核心课</button>
+</div>
+<input class="search-input" id="searchInput" placeholder="搜索课程..." oninput="renderList()">
+<div id="courseList"><div class="loading">加载课程数据...</div></div>
+</div>
+
+<!-- 学期计划 -->
+<div class="card">
+<div class="new-plan-bar">
+<span class="section-title">&#x1F4CB; 学期计划</span>
+<button class="btn btn-primary" onclick="newPlan()" id="newPlanBtn">+ 新建计划</button>
+</div>
+<div id="plansSection"><div class="loading">加载中...</div></div>
+</div>
+</div>
+
+<div class="stats-panel">
+<h3>&#x1F4CA; 学分统计</h3>
+<div class="stat-row"><span class="label">已选课程</span><span class="value" id="countStat">0 门</span></div>
+<div class="stat-row"><span class="label">通修课</span><span class="value" id="genStat">0</span></div>
+<div class="stat-row"><span class="label">学科课</span><span class="value" id="subjStat">0</span></div>
+<div class="stat-row"><span class="label">专业核心课</span><span class="value" id="coreStat">0</span></div>
+<div class="stat-row"><span class="label" style="font-weight:600">总学分</span><span class="value total" id="totalStat">0</span></div>
+</div>
+</div>
+</div>
+
+<script>
+let allCourses = [], checkedIds = new Set(), currentFilter = 'all', currentUser = null, plans = [];
+
+function loadChecked() {
+  try { checkedIds = new Set(JSON.parse(localStorage.getItem('ck')||'[]')); } catch(e) { checkedIds = new Set(); }
+}
+function saveChecked() { localStorage.setItem('ck', JSON.stringify([...checkedIds])); }
+
+async function init() {
+  loadChecked();
+  try {
+    // 登录状态
+    try { const a = await fetch('/api/auth/status'); const d = await a.json(); if (d.authenticated) currentUser = d.user; } catch(e) {}
+    // 课程列表
+    const r = await fetch('/api/courses'); const d = await r.json();
+    if (d.success && d.courses) { allCourses = d.courses; renderList(); } else throw Error('no data');
+    // 学期计划(仅登录)
+    if (currentUser) { try { const p = await fetch('/api/study-plans'); const pd = await p.json(); if (pd.success) plans = pd.plans||[]; } catch(e) {} }
+  } catch(e) {
+    document.getElementById('courseList').innerHTML = '<div class="empty">加载失败</div>';
+  }
+  renderPlans();
+  const nb = document.getElementById('newPlanBtn');
+  if (!currentUser) { nb.textContent = '登录后可建计划'; nb.disabled = true; nb.style.opacity='0.5'; }
+}
+
+function setFilter(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); currentFilter = cat; renderList();
+}
+
+function renderList() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  let f = allCourses.slice();
+  if (currentFilter !== 'all') f = f.filter(c => c.category === currentFilter);
+  if (q) f = f.filter(c => c.name.toLowerCase().includes(q));
+  const el = document.getElementById('courseList');
+  if (!f.length) { el.innerHTML = '<div class="empty">没有匹配的课程</div>'; updateStats(); return; }
+  var activePlanId = localStorage.getItem('activePlanId');
+  el.innerHTML = f.map(c => {
+    let catLabel = '';
+    if (c.category === '通修课') catLabel = '通修';
+    else if (c.category === '学科课') catLabel = '学科';
+    else if (c.category === '专业核心课') catLabel = '核心';
+    var addBtn = activePlanId ? '<button class="btn btn-primary" style="padding:3px 12px;font-size:11px;margin-left:auto" onclick="event.stopPropagation();addToPlan('+c.id+')">+计划</button>' : '';
+    return '<div class="course-item" onclick="toggle('+c.id+')">' +
+      '<input type="checkbox" '+(checkedIds.has(c.id)?'checked':'')+' onchange="event.stopPropagation();toggle('+c.id+')">' +
+      '<span class="ci-name">'+c.name+'</span>' +
+      '<span class="ci-cat">'+catLabel+'</span>' +
+      '<span class="ci-credit">'+c.credit+' 学分</span>' +
+      addBtn + '</div>';
+  }).join('');
+  updateStats();
+}
+
+function toggle(id) {
+  if (checkedIds.has(id)) checkedIds.delete(id); else checkedIds.add(id);
+  saveChecked(); renderList();
+}
+
+function updateStats() {
+  let gen=0,subj=0,core=0;
+  allCourses.filter(c=>checkedIds.has(c.id)).forEach(c => {
+    if (c.category==='通修课') gen+=c.credit;
+    else if (c.category==='学科课') subj+=c.credit;
+    else if (c.category==='专业核心课') core+=c.credit;
+  });
+  const t = gen+subj+core;
+  document.getElementById('countStat').textContent = checkedIds.size+' 门';
+  document.getElementById('genStat').textContent = gen.toFixed(1);
+  document.getElementById('subjStat').textContent = subj.toFixed(1);
+  document.getElementById('coreStat').textContent = core.toFixed(1);
+  document.getElementById('totalStat').textContent = t.toFixed(1);
+}
+
+// ===== 学期计划 =====
+function renderPlans() {
+  const el = document.getElementById('plansSection');
+  if (!plans.length) { el.innerHTML = '<div class="empty">暂无计划，点击上方「新建计划」创建</div>'; return; }
+  var activeId = localStorage.getItem('activePlanId');
+  el.innerHTML = '<div class="plan-grid">' + plans.map(p => {
+    var courses = p.courses||[];
+    var cred = courses.reduce((s,c)=>s+(c.credit||0),0);
+    var isActive = activeId == p.id;
+    var coursesHtml = courses.length ? courses.map(c =>
+      '<div style="display:flex;align-items:center;gap:6px;padding:2px 0"><span style="font-size:12px;color:var(--sub);flex:1">'+c.name+'</span><span style="font-size:11px;color:var(--muted)">'+c.credit+'分</span><button class="btn-outline" style="padding:1px 6px;font-size:10px;border-radius:4px" onclick="removeFromPlan('+p.id+','+c.course_id+')">x</button></div>'
+    ).join('') : '<div style="font-size:12px;color:var(--muted);padding:4px 0">点击课程列表的 +计划 添加</div>';
+    return '<div class="plan-card" style="'+(isActive?'border-color:var(--blue);box-shadow:0 0 0 2px rgba(59,130,246,.15)':'')+'">' +
+      '<div class="pc-name" style="cursor:pointer" onclick="selectPlan('+p.id+')">'+p.name+
+      '<span style="font-size:10px;padding:1px 8px;border-radius:999px;background:rgba(59,130,246,.08);color:var(--blue);font-weight:500">'+(p.semester||'未指定')+'</span>'+
+      (isActive?'<span style="font-size:10px;color:var(--green);font-weight:600">✓ 当前</span>':'')+'</div>' +
+      '<div class="pc-sem">共 '+courses.length+' 门课 · '+cred.toFixed(1)+' 学分</div>' +
+      coursesHtml +
+      '<div style="margin-top:8px;display:flex;gap:6px">' +
+        '<button class="btn-outline" style="padding:3px 10px;font-size:11px" onclick="renamePlan('+p.id+',&quot;'+p.name+'&quot;)">重命名</button>' +
+        '<button class="btn-outline" style="padding:3px 10px;font-size:11px;color:#ef4444;border-color:#ef4444" onclick="deletePlan('+p.id+')">删除</button>' +
+      '</div></div>';
+  }).join('') + '</div>';
+}
+
+async function newPlan() {
+  if (!currentUser) { alert('请先登录'); return; }
+  var name = prompt('计划名称：', '第'+((plans.length||0)+1)+'学期');
+  if (!name) return;
+  try {
+    var r = await fetch('/api/study-plans', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:name})});
+    var d = await r.json();
+    if (d.success) { plans.push({id:d.plan.id,name:d.plan.name,courses:[]}); localStorage.setItem('activePlanId', d.plan.id); renderPlans(); renderList(); }
+    else alert(d.message||'创建失败');
+  } catch(e) { alert('网络错误'); }
+}
+
+async function selectPlan(id){
+  localStorage.setItem('activePlanId', id);
+  renderPlans(); renderList();
+}
+async function addToPlan(courseId){
+  var planId = localStorage.getItem('activePlanId');
+  if (!planId) { alert('请先选择一个计划'); return; }
+  try {
+    await fetch('/api/study-plans/'+planId+'/courses', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({course_id:courseId})});
+    var pr = await fetch('/api/study-plans'); var pd = await pr.json();
+    if (pd.success) { plans = pd.plans||[]; renderPlans(); }
+  } catch(e) { alert('网络错误'); }
+}
+async function removeFromPlan(planId, courseId){
+  try {
+    await fetch('/api/study-plans/'+planId+'/courses/'+courseId, {method:'DELETE'});
+    var pr = await fetch('/api/study-plans'); var pd = await pr.json();
+    if (pd.success) { plans = pd.plans||[]; renderPlans(); }
+  } catch(e) { alert('网络错误'); }
+}
+async function renamePlan(id, oldName){
+  var name = prompt('新名称：', oldName);
+  if (!name) return;
+  try {
+    await fetch('/api/study-plans/'+id, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:name})});
+    var pr = await fetch('/api/study-plans'); var pd = await pr.json();
+    if (pd.success) { plans = pd.plans||[]; renderPlans(); }
+  } catch(e) { alert('网络错误'); }
+}
+async function deletePlan(id){
+  if (!confirm('确定删除此计划？')) return;
+  try {
+    await fetch('/api/study-plans/'+id, {method:'DELETE'});
+    if (localStorage.getItem('activePlanId') == id) localStorage.removeItem('activePlanId');
+    var pr = await fetch('/api/study-plans'); var pd = await pr.json();
+    if (pd.success) { plans = pd.plans||[]; renderPlans(); renderList(); }
+  } catch(e) { alert('网络错误'); }
+}
+
+(function(){if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark');})();
+window.toggleTheme=function(){var d=document.body.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');};
+init();
+</script>
+</body>
+</html>

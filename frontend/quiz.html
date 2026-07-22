@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>答题闯关 - NJU课程星图</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f0f1a;--card:#1a1a2e;--card2:#16162a;--text:#e8e4d8;--sub:#a8a4a0;--muted:#6b6860;--gold:#c9a84c;--gold2:#d4af37;--green:#10b981;--red:#ef4444;--border:rgba(201,168,76,0.15);--radius:16px;--font-sans:'Noto Sans SC',sans-serif;--font-display:'Space Grotesk','Noto Sans SC',sans-serif}
+body.light{--bg:#f5e6c8;--card:#faf0dc;--card2:#f5e6c8;--text:#3d2e1a;--sub:#6b5a42;--muted:#a09070;--border:rgba(139,109,60,0.2)}
+body.academic{--bg:#f0f4f8;--card:#fff;--card2:#f8fafc;--text:#1e293b;--sub:#64748b;--muted:#94a3b8;--gold:#3b82f6;--gold2:#2563eb;--border:#e2e8f0}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;transition:background .3s}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;padding:0 32px;display:flex;align-items:center;background:rgba(15,15,26,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+body.light .navbar{background:rgba(245,230,200,0.9)}
+body.academic .navbar{background:rgba(240,244,248,0.9)}
+.logo a{font-family:var(--font-display);font-size:18px;font-weight:600;text-decoration:none;color:var(--text);display:flex;align-items:center;gap:8px}
+.logo-dot{width:28px;height:28px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+.nav-links{margin-left:auto;display:flex;align-items:center;gap:6px}
+.nav-links a{color:var(--sub);text-decoration:none;font-size:14px;padding:6px 16px;border-radius:999px;transition:transform .2s}
+.nav-links a:hover{color:var(--text);background:rgba(201,168,76,0.08)}
+.nav-links a.active{color:var(--gold);background:rgba(201,168,76,0.12)}
+.user-area{display:flex;align-items:center;gap:10px;margin-left:12px}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;font-size:16px}
+.game-container{max-width:680px;width:92%;margin:90px auto 40px;text-align:center}
+.game-header{display:flex;justify-content:space-between;padding:16px 0;margin-bottom:20px;font-size:14px;color:var(--sub)}
+.game-header .score{font-family:var(--font-display);color:var(--gold);font-size:24px;font-weight:700}
+.question-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px 32px;box-shadow:0 8px 32px rgba(0,0,0,0.3);margin-bottom:24px;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.q-dim{font-size:12px;padding:4px 14px;border-radius:999px;background:rgba(201,168,76,0.1);color:var(--gold);margin-bottom:16px;display:inline-block}
+.q-question{font-size:20px;font-weight:600;margin-bottom:28px;color:var(--text)}
+.options{display:grid;gap:12px;width:100%}
+.option-btn{padding:16px 20px;border-radius:12px;border:2px solid var(--border);background:var(--card2);color:var(--text);font-size:15px;cursor:pointer;transition:transform .2s;text-align:left;font-family:var(--font-sans)}
+.option-btn:hover{border-color:var(--gold);transform:translateX(4px)}
+.option-btn.correct{border-color:var(--green);background:rgba(16,185,129,0.1);color:var(--green)}
+.option-btn.wrong{border-color:var(--red);background:rgba(239,68,68,0.1);color:var(--red)}
+.option-btn:disabled{cursor:default;transform:none}
+.progress-dots{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.dot{width:12px;height:12px;border-radius:50%;border:1px solid var(--border);transition:transform .2s}
+.dot.done{background:var(--gold);border-color:var(--gold)}
+.dot.wrong{background:var(--red);border-color:var(--red)}
+.dot.current{border-color:var(--gold2);box-shadow:0 0 8px rgba(201,168,76,0.4)}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:48px 32px;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.result-score{font-family:var(--font-display);font-size:72px;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.result-label{color:var(--sub);font-size:16px;margin:8px 0 24px}
+.result-ring{width:120px;height:120px;border-radius:50%;margin:0 auto 20px;position:relative}
+.result-ring svg{transform:rotate(-90deg)}
+.result-ring .pct-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-display);font-size:28px;font-weight:700}
+.btn-restart{padding:14px 40px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:transform .2s;margin-top:16px}
+.btn-restart:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(201,168,76,0.3)}
+.hidden{display:none}
+</style></head><body>
+<div id="navbar"></div>
+<script src="/js/navbar.js"></script>
+<div class="game-container">
+<div id="gameArea"><div class="game-header"><div>第 <span id="qNum">1</span>/<span id="qTotal">5</span> 题</div><div><span class="score" id="scoreDisplay">0</span> 分</div><div><span id="streakDisplay">&#9651; 0连击</span></div></div>
+<div class="progress-dots" id="progressDots"></div>
+<div class="question-card" id="questionCard"><div class="q-dim" id="qDim">维度</div><div class="q-question" id="qQuestion">加载中...</div><div class="options" id="options"></div></div></div>
+<div id="resultArea" class="hidden"><div class="result-card">
+<div class="result-ring" id="resultRing"><svg width="120" height="120"><circle cx="60" cy="60" r="54" fill="none" stroke="var(--border)" stroke-width="8"/><circle id="resultCircle" cx="60" cy="60" r="54" fill="none" stroke="var(--gold)" stroke-width="8" stroke-dasharray="339.292" stroke-dashoffset="339.292" stroke-linecap="round"/></svg><div class="pct-text" id="pctText">0%</div></div>
+<div class="result-score" id="finalScore">0</div><div class="result-label" id="resultLabel">继续加油！</div><div id="resultDetails"></div>
+<button class="btn-restart" onclick="startGame()">&#9651; 再来一次</button></div></div></div>
+<script>
+let questions=[],currentIdx=0,score=0,streak=0,results=[];
+async function startGame(){currentIdx=0;score=0;streak=0;results=[];
+document.getElementById('resultArea').classList.add('hidden');
+document.getElementById('gameArea').classList.remove('hidden');
+try{const r=await fetch('/api/quiz/question?count=5');const d=await r.json();
+if(d.success&&d.questions.length){questions=d.questions;showQuestion();}
+else document.getElementById('questionCard').innerHTML='<div style="color:var(--muted);padding:40px;">暂无题目</div>';}
+catch(e){document.getElementById('questionCard').innerHTML='<div style="color:var(--red);padding:40px;">加载失败</div>';}}
+function showQuestion(){if(currentIdx>=questions.length){showResult();return;}
+const q=questions[currentIdx];
+document.getElementById('qNum').textContent=currentIdx+1;
+document.getElementById('qTotal').textContent=questions.length;
+document.getElementById('scoreDisplay').textContent=score;
+document.getElementById('streakDisplay').innerHTML='&#9651; '+streak+'连击';
+document.getElementById('qDim').textContent=q.dimension||'综合';
+document.getElementById('qQuestion').textContent=q.question;
+document.getElementById('options').innerHTML=q.options.map((o,i)=>'<button class="option-btn" onclick="selectOption('+i+',\''+q.answer.replace(/'/g,"\\'")+'\','+q.kp_id+')">'+o+'</button>').join('');
+renderDots();}
+function renderDots(){const el=document.getElementById('progressDots');
+el.innerHTML=questions.map((_,i)=>{let cls='dot';
+if(i<currentIdx) cls+=results[i]?.correct?' done':' wrong';
+else if(i===currentIdx) cls+=' current';
+return '<span class="'+cls+'"></span>';}).join('');}
+function selectOption(idx,answer,kpId){const btns=document.querySelectorAll('.option-btn');btns.forEach(b=>b.disabled=true);
+const selected=btns[idx];const isCorrect=selected.textContent===answer;
+if(isCorrect){selected.classList.add('correct');streak++;score+=10+Math.min(streak-1,5);}
+else{selected.classList.add('wrong');streak=0;btns.forEach(b=>{if(b.textContent===answer)b.classList.add('correct');});}
+results[currentIdx]={kp_id:kpId,correct:isCorrect};
+document.getElementById('scoreDisplay').textContent=score;
+setTimeout(()=>{currentIdx++;showQuestion();},800);}
+function showResult(){document.getElementById('gameArea').classList.add('hidden');
+document.getElementById('resultArea').classList.remove('hidden');
+const total=questions.length;const correct=results.filter(r=>r.correct).length;const pct=Math.round(correct/total*100);
+document.getElementById('finalScore').textContent=score;
+document.getElementById('pctText').textContent=pct+'%';
+const circ=document.getElementById('resultCircle');
+const len=339.292;circ.setAttribute('stroke-dashoffset',len-len*pct/100);
+document.getElementById('resultLabel').textContent=pct<40?'继续加油！':pct<60?'还不错！':pct<80?'好成绩！':pct<100?'太棒了！':'知识点大师！';
+document.getElementById('resultDetails').innerHTML=results.map((r,i)=>'<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;text-align:left;color:'+(r.correct?'var(--green)':'var(--red)')+'">'+(r.correct?'&#10003;':'&#10007;')+' '+(questions[i]?.answer||'题'+i)+'</div>').join('');
+fetch('/api/quiz/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({results})}).catch(()=>{});}
+// 主题由共享导航栏管理
+window.onThemeChange=function(dark){
+  document.body.classList.remove('light','academic');
+  if(!dark)document.body.classList.add('light');
+};
+(function(){
+  var t=localStorage.getItem('theme')||'dark';
+  document.body.classList.remove('light','academic');
+  if(t==='light')document.body.classList.add('light');
+})();
+startGame();
+</script></body></html>

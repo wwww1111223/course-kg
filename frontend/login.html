@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 - 知识图谱社区</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --bg: #fafcfd;
+    --card: #ffffff;
+    --text: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --blue: #3b82f6;
+    --violet: #8b5cf6;
+    --green: #10b981;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.03);
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+    --radius: 20px;
+    --radius-sm: 12px;
+    --radius-pill: 9999px;
+    --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-sans: 'Noto Sans SC', sans-serif;
+    --font-display: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+}
+
+body.dark {--bg:#0f1116;--card:#1a1d26;--text:#e2e8f0;--text-secondary:#94a3b8;--text-muted:#64748b;--border:#2d3340;--shadow-lg:0 12px 40px rgba(0,0,0,0.5)}
+body.dark .left-panel{background:linear-gradient(135deg,#111827 0%,#15162a 100%)!important}
+body.dark input{background:#1a1d26!important;border-color:var(--border)!important;color:var(--text)!important}
+body.dark input::placeholder{color:var(--text-muted)!important}
+body.dark .error-msg{background:#2a1215!important;border-color:#4a2025!important}
+body.dark .divider{background:var(--border)!important}
+body.dark .glass-card{background:var(--card)!important;border-color:var(--border)!important}
+html, body { height: 100%; overflow: hidden; }
+body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    background-image:
+        radial-gradient(ellipse at 15% 10%, rgba(59, 130, 246, 0.04) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 30%, rgba(139, 92, 246, 0.03) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.02) 0%, transparent 45%);
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    -webkit-font-smoothing: antialiased;
+}
+
+@keyframes floatBubble {
+    0%,100% { transform: translateY(0) scale(1); opacity: 0.6; }
+    50% { transform: translateY(-15px) scale(1.03); opacity: 0.9; }
+}
+
+/* Floating decorative circles */
+.bubbles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.bubble {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.06), rgba(139, 92, 246, 0.03));
+    animation: floatBubble 9s ease-in-out infinite;
+}
+.bubble:nth-child(1) { width: 220px; height: 220px; top: 3%; left: 3%; animation-delay: 0s; }
+.bubble:nth-child(2) { width: 160px; height: 160px; top: 12%; right: 6%; animation-delay: -3s; background: radial-gradient(circle at 30% 30%, rgba(139, 92, 246, 0.05), rgba(59, 130, 246, 0.02)); }
+.bubble:nth-child(3) { width: 130px; height: 130px; bottom: 20%; left: 8%; animation-delay: -6s; background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.05), rgba(59, 130, 246, 0.02)); }
+.bubble:nth-child(4) { width: 180px; height: 180px; bottom: 5%; right: 3%; animation-delay: -9s; }
+
+/* Main card */
+.glass-card {
+    position: relative; z-index: 2;
+    display: flex; width: 920px; max-width: 94vw; min-height: 540px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+/* Left panel */
+.left-panel {
+    flex: 1.2; position: relative;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 48px 44px; overflow: hidden;
+    background: linear-gradient(135deg, #f0f7ff 0%, #f8f5ff 100%);
+}
+#kgCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.25; pointer-events: none; }
+.intro-content { position: relative; z-index: 1; }
+.intro-content h1 {
+    font-family: var(--font-display); font-size: 30px; font-weight: 700;
+    line-height: 1.35; margin-bottom: 12px; color: var(--text);
+    letter-spacing: -0.5px;
+}
+.intro-content .logo-icon {
+    font-size: 36px; margin-bottom: 10px; display: inline-block;
+    color: var(--blue);
+}
+.intro-content p {
+    font-size: 14px; line-height: 1.8; color: var(--text-secondary);
+    margin-bottom: 28px; max-width: 380px;
+}
+.intro-features { display: flex; flex-direction: column; gap: 12px; }
+.intro-features .feat {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; color: var(--text-secondary); font-weight: 500;
+}
+.intro-features .feat .dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.intro-features .feat .dot.c1 { background: var(--blue); }
+.intro-features .feat .dot.c2 { background: var(--violet); }
+.intro-features .feat .dot.c3 { background: var(--green); }
+
+.divider {
+    width: 1px; flex-shrink: 0;
+    background: var(--border);
+}
+
+/* Right panel */
+.right-panel {
+    width: 370px; flex-shrink: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 48px 44px;
+}
+.right-panel h2 {
+    font-family: var(--font-display); font-size: 24px; font-weight: 700;
+    margin-bottom: 4px; color: var(--text); letter-spacing: -0.5px;
+}
+.right-panel .subtitle {
+    font-size: 13px; color: var(--text-muted);
+    margin-bottom: 32px;
+}
+
+.form-group { margin-bottom: 20px; }
+.form-group label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;
+    font-weight: 500;
+}
+.form-group input {
+    width: 100%; padding: 13px 16px;
+    background: #f8fafc; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text);
+    font-size: 14px; outline: none; font-family: var(--font-sans);
+    transition: all var(--transition);
+}
+.form-group input::placeholder { color: var(--text-muted); }
+.form-group input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.error-msg {
+    display: none;
+    padding: 10px 14px; margin-bottom: 18px;
+    font-size: 13px; line-height: 1.5; border-radius: 8px;
+    background: #fef2f2; border: 1px solid #fecaca;
+    color: #dc2626;
+}
+.error-msg.show {
+    display: block;
+    animation: msgIn 0.3s ease forwards;
+}
+@keyframes msgIn {
+    0% { opacity: 0; transform: translateY(-6px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+    0%,100% { transform: translateX(0); }
+    15% { transform: translateX(-6px); }
+    30% { transform: translateX(6px); }
+    45% { transform: translateX(-4px); }
+    60% { transform: translateX(4px); }
+    75% { transform: translateX(-2px); }
+    90% { transform: translateX(2px); }
+}
+.shake { animation: shake 0.5s ease; }
+
+/* Submit button */
+.btn-submit {
+    position: relative; overflow: hidden;
+    width: 100%; padding: 14px; border: none;
+    border-radius: var(--radius-pill);
+    color: #fff; font-family: var(--font-sans); font-size: 15px;
+    font-weight: 600; cursor: pointer; letter-spacing: 0.3px;
+    background: linear-gradient(135deg, var(--blue), #2563eb);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+    transition: all var(--transition);
+}
+.btn-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+.btn-submit::before {
+    content: ''; position: absolute; top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s;
+}
+.btn-submit:hover::before { left: 150%; }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.link-row {
+    display: flex; justify-content: center; gap: 4px;
+    margin-top: 22px; font-size: 14px; color: var(--text-muted);
+}
+.link-row a {
+    color: var(--blue); text-decoration: none; font-weight: 600;
+    transition: color var(--transition);
+}
+.link-row a:hover { color: #2563eb; }
+
+@media (max-width:768px) {
+    .glass-card { flex-direction: column; width: 94vw; min-height: 0; }
+    .left-panel { display: none; }
+    .right-panel { width: 100%; padding: 36px 28px; }
+    .divider { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="navbar"></div>
+
+<div class="bubbles">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+</div>
+
+<div class="glass-card">
+    <div class="left-panel">
+        <canvas id="kgCanvas"></canvas>
+        <div class="intro-content">
+            <div class="logo-icon">&#9671;</div>
+            <h1>知识图谱社区</h1>
+            <p>一个连接思想、发现关联的知识协作平台。探索课程之间的深层联系，构建你的知识网络。</p>
+            <div class="intro-features">
+                <div class="feat"><span class="dot c1"></span> 可视化知识关联网络</div>
+                <div class="feat"><span class="dot c2"></span> 智能推荐学习路径</div>
+                <div class="feat"><span class="dot c3"></span> 协作构建课程图谱</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="right-panel">
+        <h2>欢迎回来</h2>
+        <p class="subtitle">登录以继续你的知识探索</p>
+        <form id="loginForm" autocomplete="off">
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="username" placeholder="输入用户名" autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="password" placeholder="输入密码" autocomplete="current-password">
+            </div>
+            <div class="error-msg" id="errorMsg"></div>
+            <button type="submit" class="btn-submit" id="loginBtn">登 录</button>
+            <div class="link-row">还没有账号？<a href="/register">立即注册</a></div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/navbar.js"></script>
+<script>
+// ALL ORIGINAL JS PRESERVED - canvas and form logic
+const kgCanvas = document.getElementById('kgCanvas');
+const kgCtx = kgCanvas.getContext('2d');
+let kgW, kgH;
+
+function resizeKg() {
+    const rect = kgCanvas.parentElement.getBoundingClientRect();
+    kgW = kgCanvas.width = rect.width;
+    kgH = kgCanvas.height = rect.height;
+}
+resizeKg();
+window.addEventListener('resize', ()=>{ clearTimeout(window._kgResize); window._kgResize=setTimeout(resizeKg,100); });
+
+const kgNodes = [];
+const NODE_COUNT = 28;
+for (let i=0;i<NODE_COUNT;i++) {
+    kgNodes.push({
+        x:Math.random(), y:Math.random(),
+        vx:(Math.random()-0.5)*0.002, vy:(Math.random()-0.5)*0.002,
+        r:Math.random()*3+2, connections:[],
+    });
+}
+for (let i=0;i<NODE_COUNT;i++) {
+    for (let j=i+1;j<NODE_COUNT;j++) {
+        if (Math.random()<0.12||(i<5&&j<8&&Math.random()<0.35)) { kgNodes[i].connections.push(j); kgNodes[j].connections.push(i); }
+    }
+}
+
+function drawKg() {
+    kgCtx.clearRect(0,0,kgW,kgH);
+    if (kgW===0||kgH===0) { requestAnimationFrame(drawKg); return; }
+    const t = Date.now()/3000;
+    for (const n of kgNodes) {
+        n.x+=n.vx; n.y+=n.vy;
+        if (n.x<0.05||n.x>0.95) n.vx*=-1; if (n.y<0.05||n.y>0.95) n.vy*=-1;
+        n.x=Math.max(0.02,Math.min(0.98,n.x)); n.y=Math.max(0.02,Math.min(0.98,n.y));
+    }
+    const drawn=new Set();
+    for (let i=0;i<kgNodes.length;i++) {
+        for (const j of kgNodes[i].connections) {
+            const key=Math.min(i,j)+'-'+Math.max(i,j); if (drawn.has(key)) continue; drawn.add(key);
+            const a=kgNodes[i], b=kgNodes[j];
+            kgCtx.beginPath(); kgCtx.moveTo(a.x*kgW,a.y*kgH); kgCtx.lineTo(b.x*kgW,b.y*kgH);
+            kgCtx.strokeStyle='rgba(59, 130, 246, 0.15)'; kgCtx.lineWidth=0.6; kgCtx.stroke();
+        }
+    }
+    for (let i=0;i<kgNodes.length;i++) {
+        const n=kgNodes[i];
+        const pulse=0.4+Math.sin(t+i*0.7)*0.3;
+        const isHub=i<5;
+        kgCtx.beginPath(); kgCtx.arc(n.x*kgW,n.y*kgH,isHub?n.r+1.5:n.r,0,Math.PI*2);
+        kgCtx.fillStyle=isHub?'rgba(59, 130, 246,'+pulse*0.4+')':'rgba(139, 92, 246,'+pulse*0.25+')';
+        kgCtx.fill();
+        if (isHub) { kgCtx.beginPath(); kgCtx.arc(n.x*kgW,n.y*kgH,n.r+5,0,Math.PI*2); kgCtx.fillStyle='rgba(59, 130, 246,'+pulse*0.06+')'; kgCtx.fill(); }
+    }
+    requestAnimationFrame(drawKg);
+}
+drawKg();
+
+const form=document.getElementById('loginForm');
+const username=document.getElementById('username');
+const password=document.getElementById('password');
+const errorMsg=document.getElementById('errorMsg');
+const loginBtn=document.getElementById('loginBtn');
+
+form.addEventListener('submit', async(e)=>{
+    e.preventDefault();
+    errorMsg.classList.remove('show'); errorMsg.textContent=''; form.classList.remove('shake');
+    const uname=username.value.trim(); const pwd=password.value;
+    if (!uname||!pwd) { showError('请输入用户名和密码'); shake(); return; }
+    loginBtn.disabled=true; loginBtn.textContent='登录中...';
+    try {
+        const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:uname,password:pwd})});
+        const data=await res.json();
+        if (data.success) window.location.href='/';
+        else { showError(data.message||'用户名或密码错误'); shake(); }
+    } catch(err) { showError('网络错误，请稍后重试'); shake(); }
+    finally { loginBtn.disabled=false; loginBtn.textContent='登 录'; }
+});
+
+function showError(msg) { errorMsg.textContent=msg; errorMsg.classList.add('show'); }
+function shake() { form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake'); }
+</script>
+</body>
+</html>
